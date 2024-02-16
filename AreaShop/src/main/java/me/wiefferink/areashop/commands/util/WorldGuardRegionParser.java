@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
@@ -12,6 +13,9 @@ import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.suggestion.SuggestionProvider;
+
+import java.util.Collections;
 
 public class WorldGuardRegionParser<C> implements ArgumentParser<C, ProtectedRegion> {
     private final WorldGuardInterface worldGuardInterface;
@@ -45,5 +49,22 @@ public class WorldGuardRegionParser<C> implements ArgumentParser<C, ProtectedReg
                 CaptionVariable.of("region", regionName)
         );
         return ArgumentParseResult.failure(exception);
+    }
+
+    @Override
+    public @NonNull SuggestionProvider<C> suggestionProvider() {
+        return SuggestionProvider.blockingStrings((commandContext, input) -> {
+            C sender = commandContext.sender();
+            if (!(sender instanceof Player player) || (!player.hasPermission("areashop.createrent")
+                    && !player.hasPermission("areashop.createbuy"))
+            ) {
+                return Collections.emptyList();
+            }
+            return this.worldGuardInterface.getRegionManager(player.getWorld()).getRegions()
+                    .values()
+                    .stream()
+                    .map(ProtectedRegion::getId)
+                    .toList();
+        });
     }
 }
