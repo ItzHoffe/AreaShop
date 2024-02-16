@@ -22,6 +22,7 @@ dependencies {
     implementation("org.incendo:cloud-paper:2.0.0-beta.3")
     api("com.google.inject:guice:7.0.0")
     api("com.google.inject.extensions:guice-assistedinject:7.0.0")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.3")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
