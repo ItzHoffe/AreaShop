@@ -14,8 +14,6 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 
 public class WorldGuardRegionParser<C> implements ArgumentParser<C, ProtectedRegion> {
-
-
     private final WorldGuardInterface worldGuardInterface;
     private final String worldKey;
 
