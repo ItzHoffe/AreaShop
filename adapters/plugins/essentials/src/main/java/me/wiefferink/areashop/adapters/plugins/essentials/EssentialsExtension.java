@@ -11,7 +11,6 @@ import me.wiefferink.areashop.features.mail.MailService;
 import net.essentialsx.api.v2.services.mail.MailSender;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +20,7 @@ public class EssentialsExtension implements AreashopExtension {
     private Essentials essentials;
 
     @Override
-    public void init(@NonNull AreaShop plugin, @NonNull Injector injector) {
+    public void init(@Nonnull AreaShop plugin, @Nonnull Injector injector) {
         if (this.enabled) {
             return;
         }
@@ -34,6 +33,10 @@ public class EssentialsExtension implements AreashopExtension {
         this.essentials = (Essentials) essentialsPlugin;
         AreaShop.info("EssentialsX detected; registering optional features");
         registerServices(plugin);
+        if (!server.getPluginManager().isPluginEnabled("Essentials")) {
+            return;
+        }
+        AreaShop.info("EssentialsX detected; binding implementation for home access");
         HomeListenerFactory factory = childInjector.getInstance(HomeListenerFactory.class);
         AccessControlValidator controlValidator = new OwnershipControlValidator();
         HomeModificationListener listener = factory.createListener(controlValidator);
