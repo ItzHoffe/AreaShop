@@ -13,7 +13,6 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Singleton
 public class AreashopCloudCommands {
