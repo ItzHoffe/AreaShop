@@ -7,6 +7,7 @@ import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.CloudCommandBean;
 import me.wiefferink.areashop.commands.util.GenericArgumentParseException;
+import me.wiefferink.areashop.commands.util.WorldFlagUtil;
 import me.wiefferink.areashop.commands.util.WorldGuardRegionParser;
 import me.wiefferink.areashop.events.ask.AddingRegionEvent;
 import me.wiefferink.areashop.events.ask.BuyingRegionEvent;
@@ -31,9 +32,9 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
-import org.incendo.cloud.bukkit.parser.WorldParser;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.yaml.snakeyaml.parser.ParserException;
@@ -51,6 +52,9 @@ import java.util.stream.Collectors;
 @Singleton
 public class AddCommandCloud extends CloudCommandBean {
 
+    private static final CloudKey<GeneralRegion.RegionType> KEY_REGION_TYPE = CloudKey.of("regionType",
+            GeneralRegion.RegionType.class);
+    private static final CloudKey<ProtectedRegion> KEY_REGION = CloudKey.of("region", ProtectedRegion.class);
     private final MessageBridge messageBridge;
     private final AreaShop plugin;
     private final WorldEditInterface worldEditInterface;
@@ -80,17 +84,17 @@ public class AddCommandCloud extends CloudCommandBean {
         return builder
                 .literal("add")
                 .senderType(Player.class)
-                .required("regionType", EnumParser.enumParser(GeneralRegion.RegionType.class))
-                .required("region", wgRegionParser)
-                .optional("world", WorldParser.worldParser())
+                .required(KEY_REGION_TYPE, EnumParser.enumParser(GeneralRegion.RegionType.class))
+                .required(KEY_REGION, wgRegionParser)
+                .flag(WorldFlagUtil.DEFAULT_WORLD_FLAG)
                 .handler(this::handleCommand);
     }
 
     private void handleCommand(CommandContext<Player> context) {
         Player player = context.sender();
-        final GeneralRegion.RegionType regionType = context.get("regionType");
-        World world = context.getOrDefault("world", player.getWorld());
-        ProtectedRegion inputRegion = context.get("region");
+        final GeneralRegion.RegionType regionType = context.get(KEY_REGION_TYPE);
+        World world = WorldFlagUtil.parseOrDetectWorld(context);
+        ProtectedRegion inputRegion = context.get(KEY_REGION);
         WorldSelection selection = getWorldSelectionFromContext(context);
         Map<String, ProtectedRegion> regions = Utils.getWorldEditRegionsInSelection(selection.selection()).stream()
                 .collect(Collectors.toMap(ProtectedRegion::getId, region -> region));
@@ -113,7 +117,7 @@ public class AddCommandCloud extends CloudCommandBean {
         Player player = context.sender();
         WorldEditSelection selection = worldEditInterface.getPlayerSelection(player);
         if (selection == null) {
-            messageBridge.message(player, "cmd-noSelection");
+           this.messageBridge.message(player, "cmd-noSelection");
             throw new GenericArgumentParseException(AddCommandCloud.class, context, Caption.of("cmd-noSelection"));
         }
         World world = selection.getWorld();
@@ -235,44 +239,44 @@ public class AddCommandCloud extends CloudCommandBean {
         Set<String> namesNoPermission = taskState.namesNoPermission();
         Set<String> namesAddCancelled = taskState.namesAddCancelled(); // Denied by an event listener
         if (!regionsSuccess.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-success",
                     inputRegion.getId(),
                     Utils.combinedMessage(regionsSuccess, "region"));
         }
         if (!regionsAlready.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-failed",
                     Utils.combinedMessage(regionsAlready, "region"));
         }
         if (!regionsAlreadyOtherWorld.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-failedOtherWorld",
                     Utils.combinedMessage(regionsAlreadyOtherWorld, "region"));
         }
         if (!regionsRentCancelled.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-rentCancelled",
                     Utils.combinedMessage(regionsRentCancelled, "region"));
         }
         if (!regionsBuyCancelled.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-buyCancelled",
                     Utils.combinedMessage(regionsBuyCancelled, "region"));
         }
         if (!namesBlacklisted.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-blacklisted",
                     Utils.createCommaSeparatedList(namesBlacklisted));
         }
         if (!namesNoPermission.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-noPermissionRegions",
                     Utils.createCommaSeparatedList(namesNoPermission));
-            messageBridge.message(player, "add-noPermissionOwnerMember");
+           this.messageBridge.message(player, "add-noPermissionOwnerMember");
         }
         if (!namesAddCancelled.isEmpty()) {
-            messageBridge.message(player,
+           this.messageBridge.message(player,
                     "add-rentCancelled",
                     Utils.createCommaSeparatedList(namesAddCancelled));
         }
