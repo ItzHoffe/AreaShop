@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import io.papermc.lib.PaperLib;
 import me.wiefferink.areashop.adapters.platform.MinecraftPlatform;
 import me.wiefferink.areashop.adapters.platform.paper.PaperPlatform;
+import me.wiefferink.areashop.commands.cloud.AreashopCloudCommands;
 import me.wiefferink.areashop.extensions.AreashopExtension;
 import me.wiefferink.areashop.features.signs.SignManager;
 import me.wiefferink.areashop.interfaces.AreaShopInterface;
@@ -307,9 +308,9 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 
 		setupTasks();
 
-		// Startup the CommandManager (registers itself for the command)
-		commandManager = injector.getInstance(CommandManager.class);
-		managers.add(commandManager);
+		// Register commands
+		AreashopCloudCommands commands = injector.getInstance(AreashopCloudCommands.class);
+		commands.registerCommands();
 
 		// Create a signLinkerManager
 		signLinkerManager = injector.getInstance(SignLinkerManager.class);
