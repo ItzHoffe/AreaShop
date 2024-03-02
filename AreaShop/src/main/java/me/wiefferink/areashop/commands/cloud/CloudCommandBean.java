@@ -1,4 +1,4 @@
-package me.wiefferink.areashop.commands;
+package me.wiefferink.areashop.commands.cloud;
 
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;

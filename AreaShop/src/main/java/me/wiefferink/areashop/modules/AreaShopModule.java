@@ -72,7 +72,7 @@ public class AreaShopModule extends AbstractModule {
         // Setup managers
         bind(IFileManager.class).to(FileManager.class).asEagerSingleton();
         bind(FeatureManager.class).in(Singleton.class);
-        bind(CommandManager.class).in(Singleton.class);
+        // bind(CommandManager.class).in(Singleton.class);
         bind(SignLinkerManager.class).in(Singleton.class);
         bind(ServiceManager.class).toInstance(this.serviceManager);
         install(new SignsModule());

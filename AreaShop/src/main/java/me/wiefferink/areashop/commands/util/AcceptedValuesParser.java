@@ -1,7 +1,6 @@
 package me.wiefferink.areashop.commands.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
@@ -80,13 +79,7 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
         if (acceptedValues.contains(toTest)) {
             return ArgumentParseResult.success(toTest);
         }
-        return ArgumentParseResult.failure(
-                new GenericArgumentParseException(
-                        AcceptedValuesParser.class,
-                        commandContext,
-                        Caption.of(this.failureMessageKey)
-                )
-        );
+        return ArgumentParseResult.failure(new AreaShopCommandException(this.failureMessageKey));
     }
 
     @Override

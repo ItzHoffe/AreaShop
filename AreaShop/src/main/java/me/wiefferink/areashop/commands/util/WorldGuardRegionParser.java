@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
@@ -13,41 +14,38 @@ import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.flag.CommandFlag;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import java.util.Collections;
 
-public class WorldGuardRegionParser<C> implements ArgumentParser<C, ProtectedRegion> {
+public class WorldGuardRegionParser<C extends Entity> implements ArgumentParser<C, ProtectedRegion> {
     private final WorldGuardInterface worldGuardInterface;
-    private final String worldKey;
+    private final CommandFlag<World> worldFlag;
 
     public WorldGuardRegionParser(
-            @NonNull String worldKey,
+            @NonNull CommandFlag<World> worldFlag,
             @NonNull WorldGuardInterface worldGuardInterface
     ) {
-        this.worldKey = worldKey;
+        this.worldFlag = worldFlag;
         this.worldGuardInterface = worldGuardInterface;
     }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull ProtectedRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
                                                                         @NonNull CommandInput commandInput) {
-        World world = commandContext.get(this.worldKey);
-        String regionName = commandInput.readString();
+        World world = WorldFlagUtil.parseOrDetectWorld(commandContext, worldFlag);
+        String regionName = commandInput.peekString();
         RegionManager regionManager = this.worldGuardInterface.getRegionManager(world);
         if (regionManager == null) {
             return ArgumentParseResult.failure(new IllegalArgumentException("No region manager for world: " + world.getName()));
         }
         ProtectedRegion protectedRegion = regionManager.getRegion(regionName);
         if (protectedRegion != null) {
+            commandInput.readString();
             return ArgumentParseResult.success(protectedRegion);
         }
-        ParserException exception = new GenericArgumentParseException(
-                WorldGuardRegionParser.class,
-                commandContext,
-                Caption.of("cmd-noRegion"),
-                CaptionVariable.of("region", regionName)
-        );
+        AreaShopCommandException exception = new AreaShopCommandException("cmd-noRegion", regionName);
         return ArgumentParseResult.failure(exception);
     }
 
@@ -55,9 +53,7 @@ public class WorldGuardRegionParser<C> implements ArgumentParser<C, ProtectedReg
     public @NonNull SuggestionProvider<C> suggestionProvider() {
         return SuggestionProvider.blockingStrings((commandContext, input) -> {
             C sender = commandContext.sender();
-            if (!(sender instanceof Player player) || (!player.hasPermission("areashop.createrent")
-                    && !player.hasPermission("areashop.createbuy"))
-            ) {
+            if (!(sender instanceof Player player)) {
                 return Collections.emptyList();
             }
             return this.worldGuardInterface.getRegionManager(player.getWorld()).getRegions()

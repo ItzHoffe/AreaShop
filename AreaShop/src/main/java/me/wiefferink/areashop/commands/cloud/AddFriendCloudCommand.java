@@ -3,7 +3,6 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.CloudCommandBean;
 import me.wiefferink.areashop.commands.util.GeneralRegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;

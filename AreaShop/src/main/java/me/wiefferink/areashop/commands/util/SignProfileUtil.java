@@ -5,7 +5,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;
@@ -56,7 +55,7 @@ public final class SignProfileUtil {
             @NonNull CommandContext<? extends CommandSender> context,
             @NonNull CommandFlag<String> flag,
             @NonNull Plugin plugin
-    ) throws GenericArgumentParseException {
+    ) throws AreaShopCommandException {
         String profile = context.flags().get(flag);
         if (profile == null) {
             return null;
@@ -65,11 +64,7 @@ public final class SignProfileUtil {
         if (profiles.contains(profile.toLowerCase(Locale.ENGLISH))) {
             return profile.toLowerCase(Locale.ENGLISH);
         }
-        throw new GenericArgumentParseException(
-                SignProfileUtil.class,
-                context,
-                Caption.of("addsign-wrongProfile")
-        );
+        throw new AreaShopCommandException("addsign-wrongProfile");
     }
 
 }

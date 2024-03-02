@@ -5,8 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.CloudCommandBean;
-import me.wiefferink.areashop.commands.util.GenericArgumentParseException;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.WorldFlagUtil;
 import me.wiefferink.areashop.commands.util.WorldGuardRegionParser;
 import me.wiefferink.areashop.events.ask.AddingRegionEvent;
@@ -28,11 +27,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
-import org.incendo.cloud.caption.Caption;
+import org.incendo.cloud.caption.CaptionVariable;
+import org.incendo.cloud.caption.StandardCaptionKeys;
+import org.incendo.cloud.caption.StandardCaptionsProvider;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -41,9 +43,11 @@ import org.yaml.snakeyaml.parser.ParserException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -78,14 +82,14 @@ public class AddCommandCloud extends CloudCommandBean {
     @Override
     protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
         // /as add <rent|buy> [region] [world]
-        ParserDescriptor<CommandSender, ProtectedRegion> wgRegionParser = ParserDescriptor.of(new WorldGuardRegionParser<>(
-                "world",
+        ParserDescriptor<Entity, ProtectedRegion> wgRegionParser = ParserDescriptor.of(new WorldGuardRegionParser<>(
+                WorldFlagUtil.DEFAULT_WORLD_FLAG,
                 this.worldGuardInterface), ProtectedRegion.class);
         return builder
                 .literal("add")
                 .senderType(Player.class)
                 .required(KEY_REGION_TYPE, EnumParser.enumParser(GeneralRegion.RegionType.class))
-                .required(KEY_REGION, wgRegionParser)
+                .optional(KEY_REGION, wgRegionParser)
                 .flag(WorldFlagUtil.DEFAULT_WORLD_FLAG)
                 .handler(this::handleCommand);
     }
@@ -94,16 +98,21 @@ public class AddCommandCloud extends CloudCommandBean {
         Player player = context.sender();
         final GeneralRegion.RegionType regionType = context.get(KEY_REGION_TYPE);
         World world = WorldFlagUtil.parseOrDetectWorld(context);
-        ProtectedRegion inputRegion = context.get(KEY_REGION);
-        WorldSelection selection = getWorldSelectionFromContext(context);
-        Map<String, ProtectedRegion> regions = Utils.getWorldEditRegionsInSelection(selection.selection()).stream()
-                .collect(Collectors.toMap(ProtectedRegion::getId, region -> region));
-        if (regions.isEmpty()) {
-            throw new GenericArgumentParseException(AddCommandCloud.class, context, Caption.of("cmd-noWERegionsFound"));
+        Map<String, ProtectedRegion> regions;
+        Optional<ProtectedRegion> inputRegion = context.optional(KEY_REGION);
+        if (inputRegion.isPresent()) {
+            regions = new HashMap<>();
+            regions.put(inputRegion.get().getId(), inputRegion.get());
+        } else {
+            WorldSelection selection = getWorldSelectionFromContext(context);
+            regions = Utils.getWorldEditRegionsInSelection(selection.selection()).stream()
+                    .collect(Collectors.toMap(ProtectedRegion::getId, region -> region));
         }
-        regions.put(inputRegion.getId(), inputRegion);
+        if (regions.isEmpty()) {
+            throw new AreaShopCommandException("cmd-noWERegionsFound");
+        }
         AreaShop.debug("Starting add task with " + regions.size() + " regions");
-        AddTaskState state = createState(inputRegion, player, regionType, world);
+        AddTaskState state = createState(player, regionType, world);
         int batchSize = plugin.getConfig().getInt("adding.regionsPerTick");
         Do.forAll(
                 batchSize,
@@ -117,15 +126,13 @@ public class AddCommandCloud extends CloudCommandBean {
         Player player = context.sender();
         WorldEditSelection selection = worldEditInterface.getPlayerSelection(player);
         if (selection == null) {
-           this.messageBridge.message(player, "cmd-noSelection");
-            throw new GenericArgumentParseException(AddCommandCloud.class, context, Caption.of("cmd-noSelection"));
+            throw new AreaShopCommandException("cmd-noSelection");
         }
         World world = selection.getWorld();
         return new WorldSelection(world, selection);
     }
 
     private AddTaskState createState(
-            @NonNull ProtectedRegion inputRegion,
             @NonNull Player player,
             GeneralRegion.@NonNull RegionType regionType,
             @NonNull World world
@@ -139,7 +146,6 @@ public class AddCommandCloud extends CloudCommandBean {
         Set<String> namesNoPermission = new TreeSet<>();
         Set<String> namesAddCancelled = new TreeSet<>(); // Denied by an event listener
         return new AddTaskState(
-                inputRegion,
                 player,
                 regionType,
                 regionsSuccess,
@@ -191,9 +197,9 @@ public class AddCommandCloud extends CloudCommandBean {
                 existing.addAll(worldGuardInterface.getMembers(region).asUniqueIdList());
                 debugResult(player, regionName, landlord, existing, isMember, isOwner, regionType);
                 if (regionType == GeneralRegion.RegionType.BUY) {
-                    proccessBuy(landlord, existing, taskState);
+                    proccessBuy(region, landlord, existing, taskState);
                 } else if (regionType == GeneralRegion.RegionType.RENT) {
-                    processRent(landlord, existing, taskState);
+                    processRent(region, landlord, existing, taskState);
                 }
             }
         }
@@ -228,7 +234,6 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private void onCompletion(AddCommandCloud.@NonNull AddTaskState taskState) {
-        ProtectedRegion inputRegion = taskState.inputRegion();
         CommandSender player = taskState.sender();
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
         Set<GeneralRegion> regionsAlready = taskState.regionsAlready();
@@ -239,61 +244,63 @@ public class AddCommandCloud extends CloudCommandBean {
         Set<String> namesNoPermission = taskState.namesNoPermission();
         Set<String> namesAddCancelled = taskState.namesAddCancelled(); // Denied by an event listener
         if (!regionsSuccess.isEmpty()) {
-           this.messageBridge.message(player,
-                    "add-success",
-                    inputRegion.getId(),
-                    Utils.combinedMessage(regionsSuccess, "region"));
+            for (GeneralRegion added : regionsSuccess) {
+                this.messageBridge.message(player,
+                        "add-success",
+                        added.getName(),
+                        Utils.combinedMessage(regionsSuccess, "region"));
+            }
         }
         if (!regionsAlready.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-failed",
                     Utils.combinedMessage(regionsAlready, "region"));
         }
         if (!regionsAlreadyOtherWorld.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-failedOtherWorld",
                     Utils.combinedMessage(regionsAlreadyOtherWorld, "region"));
         }
         if (!regionsRentCancelled.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-rentCancelled",
                     Utils.combinedMessage(regionsRentCancelled, "region"));
         }
         if (!regionsBuyCancelled.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-buyCancelled",
                     Utils.combinedMessage(regionsBuyCancelled, "region"));
         }
         if (!namesBlacklisted.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-blacklisted",
                     Utils.createCommaSeparatedList(namesBlacklisted));
         }
         if (!namesNoPermission.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-noPermissionRegions",
                     Utils.createCommaSeparatedList(namesNoPermission));
-           this.messageBridge.message(player, "add-noPermissionOwnerMember");
+            this.messageBridge.message(player, "add-noPermissionOwnerMember");
         }
         if (!namesAddCancelled.isEmpty()) {
-           this.messageBridge.message(player,
+            this.messageBridge.message(player,
                     "add-rentCancelled",
                     Utils.createCommaSeparatedList(namesAddCancelled));
         }
     }
 
     private void processRent(
+            @NonNull ProtectedRegion region,
             boolean landlord,
             List<UUID> existing,
             @NonNull AddTaskState taskState
     ) {
         Player player = taskState.sender();
-        ProtectedRegion inputRegion = taskState.inputRegion();
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
         Set<GeneralRegion> regionsRentCancelled = taskState.regionsRentCancelled(); // Denied by an event listener
         Set<String> namesAddCancelled = taskState.namesAddCancelled(); // Denied by an event listener
         World world = taskState.world();
-        String regionName = inputRegion.getId();
+        String regionName = region.getId();
         RentRegion rent = regionFactory.createRentRegion(regionName, world);
         // Set landlord
         if (landlord) {
@@ -342,17 +349,17 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private void proccessBuy(
+            @NonNull ProtectedRegion region,
             boolean landlord,
             List<UUID> existing,
             @NonNull AddTaskState taskState
     ) {
         Player player = taskState.sender();
-        ProtectedRegion inputRegion = taskState.inputRegion();
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
         Set<GeneralRegion> regionsBuyCancelled = taskState.regionsBuyCancelled(); // Denied by an event listener
         Set<String> namesAddCancelled = taskState.namesAddCancelled(); // Denied by an event listener
         World world = taskState.world();
-        String regionName = inputRegion.getId();
+        String regionName = region.getId();
         BuyRegion buy = regionFactory.createBuyRegion(regionName, world);
         // Set landlord
         if (landlord) {
@@ -426,7 +433,6 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private record AddTaskState(
-            @NonNull ProtectedRegion inputRegion,
             @NonNull Player sender,
             GeneralRegion.@NonNull RegionType regionType,
             @NonNull Set<GeneralRegion> regionsSuccess,

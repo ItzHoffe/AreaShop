@@ -26,11 +26,7 @@ public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion> 
         if (region != null) {
             return ArgumentParseResult.success(region);
         }
-        GenericArgumentParseException exception = new GenericArgumentParseException(
-                GeneralRegionParser.class,
-                commandContext,
-                Caption.of("cmd-notRegistered")
-        );
+        AreaShopCommandException exception = new AreaShopCommandException("cmd-notRegistered");
         return ArgumentParseResult.failure(exception);
     }
 

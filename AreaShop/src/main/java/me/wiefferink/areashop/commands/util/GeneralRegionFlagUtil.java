@@ -31,21 +31,21 @@ public final class GeneralRegionFlagUtil {
     public static <C extends Entity & CommandSender> GeneralRegion createOrParseRegion(
             @NonNull CommandContext<C> context,
             @NonNull CommandFlag<GeneralRegion> flag
-    ) throws GenericArgumentParseException {
+    ) throws AreaShopCommandException {
         GeneralRegion region = context.flags().get(flag);
         if (region != null) {
             return region;
         }
         Location location = context.sender().getLocation();
         List<GeneralRegion> regions = Utils.getImportantRegions(location);
-        Caption error;
+        String errorMessageKey;
         if (regions.isEmpty()) {
-            error = Caption.of("cmd-noRegionsAtLocation");
+            errorMessageKey = "cmd-noRegionsAtLocation";
         } else if (regions.size() > 1) {
-            error = Caption.of("cmd-moreRegionsAtLocation");
+            errorMessageKey = "cmd-moreRegionsAtLocation";
         } else {
             return regions.get(0);
         }
-        throw new GenericArgumentParseException(WorldFlagUtil.class, context, error);
+        throw new AreaShopCommandException(errorMessageKey);
     }
 }

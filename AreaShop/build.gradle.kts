@@ -3,6 +3,12 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.2.3"
 }
 
+idea {
+    module {
+        isDownloadSources = true
+    }
+}
+
 description = "AreaShop"
 
 dependencies {
