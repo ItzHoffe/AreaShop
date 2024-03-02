@@ -25,7 +25,9 @@ public class AreashopCloudCommands {
     private static final List<Class<? extends CloudCommandBean>> COMMAND_CLASSES = List.of(
             AddCommandCloud.class,
             AddFriendCloudCommand.class,
-            AddSignCloudCommand.class
+            AddSignCloudCommand.class,
+            BuyCloudCommand.class,
+            RentCloudCommand.class
     );
 
     private final MessageBridge messageBridge;

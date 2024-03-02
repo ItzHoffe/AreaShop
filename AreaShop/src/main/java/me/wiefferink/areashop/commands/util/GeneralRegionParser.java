@@ -12,7 +12,7 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
 
 public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion>  {
 
-    private final IFileManager fileManager;
+    protected final IFileManager fileManager;
 
     public GeneralRegionParser(@NonNull IFileManager fileManager) {
         this.fileManager = fileManager;
