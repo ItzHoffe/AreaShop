@@ -26,6 +26,7 @@ dependencies {
     api("com.github.NLthijs48:BukkitDo:819d51ec2b")
     api("io.github.baked-libs:dough-data:1.2.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.3")
+    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.1")
     api("com.google.inject:guice:7.0.0")
     api("com.google.inject.extensions:guice-assistedinject:7.0.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.3")

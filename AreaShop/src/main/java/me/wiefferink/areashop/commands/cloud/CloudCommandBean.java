@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandBean;
 import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 
 /**
  * An extension of {@link CommandBean} which does extra pre-processing of the commands.
@@ -12,12 +13,19 @@ import org.incendo.cloud.key.CloudKey;
  */
 public abstract class CloudCommandBean extends CommandBean<CommandSender> {
 
+    private boolean requireConfirmation;
+
+    protected void withConfirmation() {
+        this.requireConfirmation = true;
+    }
+
     @Override
     protected final Command.@NonNull Builder<? extends CommandSender> configure(
             final Command.@NonNull Builder<CommandSender> builder
     ) {
         return this.configureCommand(builder)
-                .meta(CloudKey.of("bukkit_description", String.class), this.stringDescription());
+                .meta(CloudKey.of("bukkit_description", String.class), this.stringDescription())
+                .meta(ConfirmationManager.META_CONFIRMATION_REQUIRED, this.requireConfirmation);
     }
 
     /**

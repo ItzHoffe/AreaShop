@@ -1,5 +1,8 @@
 package me.wiefferink.areashop.commands.cloud;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -16,6 +19,10 @@ import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.processors.cache.CloudCache;
+import org.incendo.cloud.processors.cache.GuavaCache;
+import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
+import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 
 import java.util.List;
 
@@ -73,7 +80,13 @@ public class AreashopCloudCommands {
         exceptionController.registerHandler(ArgumentParseException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
         exceptionController.registerHandler(AreaShopCommandException.class,
                 new ArgumentParseExceptionHandler<>(this.messageBridge));
-
+        var confirmationConfiguration = ConfirmationConfiguration.<CommandSender>builder()
+                .cache(GuavaCache.of(CacheBuilder.newBuilder().build()))
+                .noPendingCommandNotifier(x -> {})
+                .confirmationRequiredNotifier((x, y) -> {})
+                .build();
+        ConfirmationManager<CommandSender> confirmationManager = ConfirmationManager.of(confirmationConfiguration);
+        commandManager.registerCommandPostProcessor(confirmationManager.createPostprocessor());
     }
 
 
