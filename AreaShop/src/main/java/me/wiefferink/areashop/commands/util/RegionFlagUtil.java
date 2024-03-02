@@ -1,11 +1,13 @@
 package me.wiefferink.areashop.commands.util;
 
+import me.wiefferink.areashop.interfaces.WorldEditSelection;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
 import me.wiefferink.areashop.regions.GeneralRegion;
 import me.wiefferink.areashop.regions.RentRegion;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -13,6 +15,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;
 
+import java.util.Collection;
 import java.util.List;
 
 public final class RegionFlagUtil {
@@ -26,6 +29,28 @@ public final class RegionFlagUtil {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new GeneralRegionParser<>(fileManager), GeneralRegion.class))
                 .build();
+    }
+
+    @NonNull
+    public static Collection<GeneralRegion> getOrParseRegionsInSel(
+            @NonNull CommandContext<CommandSender> context,
+            @NonNull CommandFlag<GeneralRegion> regionFlag
+    ) {
+        CommandSender sender = context.sender();
+        if (!(sender instanceof Player player)) {
+            throw new AreaShopCommandException("cmd-weOnlyByPlayer");
+        }
+        GeneralRegion declaredRegion = context.flags().get(regionFlag);
+        if (declaredRegion != null) {
+            return List.of(declaredRegion);
+        }
+        Location location = player.getLocation();
+        List<GeneralRegion> regions = Utils.getImportantRegions(location);
+        if (!regions.isEmpty()) {
+            return regions;
+
+        }
+        throw new AreaShopCommandException("cmd-noRegionsAtLocation");
     }
 
     @NonNull

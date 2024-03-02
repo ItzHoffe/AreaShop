@@ -31,6 +31,10 @@ public class AreashopCloudCommands {
             DelFriendCloudCommand.class,
             DelSignCloudCommand.class,
             FindCloudCommand.class,
+            GroupAddCloudCommand.class,
+            GroupDelCloudCommand.class,
+            GroupInfoCloudCommand.class,
+            GroupListCloudCommand.class,
             RentCloudCommand.class
     );
 
