@@ -30,6 +30,7 @@ public class AreashopCloudCommands {
             DelCloudCommand.class,
             DelFriendCloudCommand.class,
             DelSignCloudCommand.class,
+            FindCloudCommand.class,
             RentCloudCommand.class
     );
 
