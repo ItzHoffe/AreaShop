@@ -59,6 +59,7 @@ public class AreashopCloudCommands {
             this.commandManager.registerBrigadier();
         }
         ExceptionController<CommandSender> exceptionController = this.commandManager.exceptionController();
+        // We need to unwrap ArgumentParseException because they wrap the custom exception messages
         exceptionController.registerHandler(ArgumentParseException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
         exceptionController.registerHandler(AreaShopCommandException.class,
                 new ArgumentParseExceptionHandler<>(this.messageBridge));
