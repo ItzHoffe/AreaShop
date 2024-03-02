@@ -2,6 +2,7 @@ package me.wiefferink.areashop.commands.util;
 
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
+import me.wiefferink.areashop.regions.GeneralRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -20,12 +21,13 @@ public class BuyRegionParser<C> implements ArgumentParser<C, BuyRegion> {
     @Override
     public @NonNull ArgumentParseResult<@NonNull BuyRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
                                                                   @NonNull CommandInput commandInput) {
-        String input = commandInput.readInput();
+        String input = commandInput.peekString();
         BuyRegion region = this.fileManager.getBuy(input);
         if (region != null) {
+            commandInput.readString();
             return ArgumentParseResult.success(region);
         }
-        AreaShopCommandException exception = new AreaShopCommandException("buy-notBuyable");
+        AreaShopCommandException exception = new AreaShopCommandException("buy-noBuyable", input);
         return ArgumentParseResult.failure(exception);
     }
 

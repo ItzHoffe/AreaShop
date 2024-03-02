@@ -21,12 +21,13 @@ public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion> 
     @Override
     public @NonNull ArgumentParseResult<@NonNull GeneralRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
                                                                       @NonNull CommandInput commandInput) {
-        String input = commandInput.readInput();
+        String input = commandInput.peekString();
         GeneralRegion region = this.fileManager.getRegion(input);
         if (region != null) {
+            commandInput.readString();
             return ArgumentParseResult.success(region);
         }
-        AreaShopCommandException exception = new AreaShopCommandException("cmd-notRegistered");
+        AreaShopCommandException exception = new AreaShopCommandException("cmd-notRegistered", input);
         return ArgumentParseResult.failure(exception);
     }
 

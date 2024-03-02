@@ -21,12 +21,13 @@ public class RentRegionParser<C> implements ArgumentParser<C, RentRegion> {
     @Override
     public @NonNull ArgumentParseResult<@NonNull RentRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
                                                                    @NonNull CommandInput commandInput) {
-        String input = commandInput.readInput();
+        String input = commandInput.peekString();
         RentRegion region = this.fileManager.getRent(input);
         if (region != null) {
+            commandInput.readString();
             return ArgumentParseResult.success(region);
         }
-        AreaShopCommandException exception = new AreaShopCommandException("buy-notBuyable");
+        AreaShopCommandException exception = new AreaShopCommandException("buy-notBuyable", input);
         return ArgumentParseResult.failure(exception);
     }
 
