@@ -15,7 +15,6 @@ import me.wiefferink.areashop.events.ask.RentingRegionEvent;
 import me.wiefferink.areashop.events.notify.BoughtRegionEvent;
 import me.wiefferink.areashop.events.notify.RentedRegionEvent;
 import me.wiefferink.areashop.interfaces.WorldEditInterface;
-import me.wiefferink.areashop.interfaces.WorldEditSelection;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
@@ -33,14 +32,10 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
-import org.incendo.cloud.caption.CaptionVariable;
-import org.incendo.cloud.caption.StandardCaptionKeys;
-import org.incendo.cloud.caption.StandardCaptionsProvider;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
-import org.yaml.snakeyaml.parser.ParserException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -226,6 +221,7 @@ public class AddCommandCloud extends CloudCommandBean {
 
     private void onCompletion(AddCommandCloud.@NonNull AddTaskState taskState) {
         CommandSender player = taskState.sender();
+        GeneralRegion.RegionType regionType = taskState.regionType;
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
         Set<GeneralRegion> regionsAlready = taskState.regionsAlready();
         Set<GeneralRegion> regionsAlreadyOtherWorld = taskState.regionsAlreadyOtherWorld();
@@ -235,16 +231,15 @@ public class AddCommandCloud extends CloudCommandBean {
         Set<String> namesNoPermission = taskState.namesNoPermission();
         Set<String> namesAddCancelled = taskState.namesAddCancelled(); // Denied by an event listener
         if (!regionsSuccess.isEmpty()) {
-            for (GeneralRegion added : regionsSuccess) {
-                this.messageBridge.message(player,
-                        "add-success",
-                        added.getName(),
-                        Utils.combinedMessage(regionsSuccess, "region"));
-            }
+            this.messageBridge.message(player,
+                    "add-success",
+
+                    Utils.combinedMessage(regionsSuccess, "region"));
         }
         if (!regionsAlready.isEmpty()) {
             this.messageBridge.message(player,
                     "add-failed",
+                    regionType.name().toLowerCase(Locale.ENGLISH),
                     Utils.combinedMessage(regionsAlready, "region"));
         }
         if (!regionsAlreadyOtherWorld.isEmpty()) {
