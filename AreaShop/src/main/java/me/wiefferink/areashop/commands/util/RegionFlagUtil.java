@@ -6,7 +6,6 @@ import me.wiefferink.areashop.regions.GeneralRegion;
 import me.wiefferink.areashop.regions.RentRegion;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -30,7 +29,7 @@ public final class RegionFlagUtil {
     }
 
     @NonNull
-    public static <C extends Entity & CommandSender> GeneralRegion createOrParseRegion(
+    public static <C> GeneralRegion getOrParseRegion(
             @NonNull CommandContext<C> context,
             @NonNull CommandFlag<GeneralRegion> flag
     ) throws AreaShopCommandException {
@@ -38,7 +37,11 @@ public final class RegionFlagUtil {
         if (region != null) {
             return region;
         }
-        Location location = context.sender().getLocation();
+        C sender = context.sender();
+        if (!(sender instanceof Entity entity)) {
+            throw new AreaShopCommandException("cmd-automaticRegionOnlyByPlayer");
+        }
+        Location location = entity.getLocation();
         List<GeneralRegion> regions = Utils.getImportantRegions(location);
         String errorMessageKey;
         if (regions.isEmpty()) {
@@ -50,6 +53,7 @@ public final class RegionFlagUtil {
         }
         throw new AreaShopCommandException(errorMessageKey);
     }
+
 
     public static CommandFlag<BuyRegion> createDefaultBuy(@NonNull IFileManager fileManager) {
         return CommandFlag.builder("region")

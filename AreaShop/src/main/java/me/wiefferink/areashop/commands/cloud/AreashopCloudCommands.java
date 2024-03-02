@@ -28,6 +28,7 @@ public class AreashopCloudCommands {
             AddSignCloudCommand.class,
             BuyCloudCommand.class,
             DelCloudCommand.class,
+            DelFriendCloudCommand.class,
             RentCloudCommand.class
     );
 

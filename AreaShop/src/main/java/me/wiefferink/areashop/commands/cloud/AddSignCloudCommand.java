@@ -79,7 +79,7 @@ public class AddSignCloudCommand extends CloudCommandBean {
 			return;
 		}
 
-		GeneralRegion region = RegionFlagUtil.createOrParseRegion(context, this.regionFlag);
+		GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
 		String profile = SignProfileUtil.getOrParseProfile(context, this.plugin);
 		Optional<RegionSign> optionalRegionSign = this.signManager.signFromLocation(block.getLocation());
 		if(optionalRegionSign.isPresent()) {

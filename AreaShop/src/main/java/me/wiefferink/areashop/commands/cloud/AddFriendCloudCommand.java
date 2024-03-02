@@ -66,7 +66,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
            this.messageBridge.message(sender, "addfriend-noPermission");
             return;
         }
-        GeneralRegion region = RegionFlagUtil.createOrParseRegion(context, this.regionFlag);
+        GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
         OfflinePlayer friend = context.get(KEY_FRIEND);
         if (sender.hasPermission("areashop.addfriendall") && ((region instanceof RentRegion rentRegion && !rentRegion.isRented())
                 || (region instanceof BuyRegion buyRegion && !buyRegion.isSold()))) {
