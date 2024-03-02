@@ -8,6 +8,7 @@ import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.WorldFlagUtil;
 import me.wiefferink.areashop.commands.util.WorldGuardRegionParser;
+import me.wiefferink.areashop.commands.util.WorldSelection;
 import me.wiefferink.areashop.events.ask.AddingRegionEvent;
 import me.wiefferink.areashop.events.ask.BuyingRegionEvent;
 import me.wiefferink.areashop.events.ask.RentingRegionEvent;
@@ -104,7 +105,7 @@ public class AddCommandCloud extends CloudCommandBean {
             regions = new HashMap<>();
             regions.put(inputRegion.get().getId(), inputRegion.get());
         } else {
-            WorldSelection selection = getWorldSelectionFromContext(context);
+            WorldSelection selection = WorldSelection.fromPlayer(context.sender(), this.worldEditInterface);
             regions = Utils.getWorldEditRegionsInSelection(selection.selection()).stream()
                     .collect(Collectors.toMap(ProtectedRegion::getId, region -> region));
         }
@@ -120,16 +121,6 @@ public class AddCommandCloud extends CloudCommandBean {
                 regionEntry -> processEntry(regionEntry, state),
                 () -> onCompletion(state)
         );
-    }
-
-    private WorldSelection getWorldSelectionFromContext(CommandContext<Player> context) throws ParserException {
-        Player player = context.sender();
-        WorldEditSelection selection = worldEditInterface.getPlayerSelection(player);
-        if (selection == null) {
-            throw new AreaShopCommandException("cmd-noSelection");
-        }
-        World world = selection.getWorld();
-        return new WorldSelection(world, selection);
     }
 
     private AddTaskState createState(
@@ -426,10 +417,6 @@ public class AddCommandCloud extends CloudCommandBean {
     @Override
     protected @NonNull CommandProperties properties() {
         return CommandProperties.of("add");
-    }
-
-    private record WorldSelection(@NonNull World world, @NonNull WorldEditSelection selection) {
-
     }
 
     private record AddTaskState(

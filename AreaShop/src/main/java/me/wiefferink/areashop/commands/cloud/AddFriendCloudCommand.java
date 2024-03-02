@@ -3,7 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.util.GeneralRegionFlagUtil;
+import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -36,7 +36,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
     ) {
         this.messageBridge = messageBridge;
         this.plugin = plugin;
-        this.regionFlag = GeneralRegionFlagUtil.createDefault(fileManager);
+        this.regionFlag = RegionFlagUtil.createDefault(fileManager);
     }
 
     public String getHelp(CommandSender target) {
@@ -66,7 +66,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
            this.messageBridge.message(sender, "addfriend-noPermission");
             return;
         }
-        GeneralRegion region = GeneralRegionFlagUtil.createOrParseRegion(context, this.regionFlag);
+        GeneralRegion region = RegionFlagUtil.createOrParseRegion(context, this.regionFlag);
         OfflinePlayer friend = context.get(KEY_FRIEND);
         if (sender.hasPermission("areashop.addfriendall") && ((region instanceof RentRegion rentRegion && !rentRegion.isRented())
                 || (region instanceof BuyRegion buyRegion && !buyRegion.isSold()))) {

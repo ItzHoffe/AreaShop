@@ -3,7 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.util.GeneralRegionFlagUtil;
+import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.commands.util.SignProfileUtil;
 import me.wiefferink.areashop.features.signs.RegionSign;
 import me.wiefferink.areashop.features.signs.SignManager;
@@ -45,7 +45,7 @@ public class AddSignCloudCommand extends CloudCommandBean {
 		this.messageBridge = messageBridge;
         this.signManager = signManager;
         this.plugin = plugin;
-		this.regionFlag = GeneralRegionFlagUtil.createDefault(fileManager);
+		this.regionFlag = RegionFlagUtil.createDefault(fileManager);
     }
 
 	@Override
@@ -79,7 +79,7 @@ public class AddSignCloudCommand extends CloudCommandBean {
 			return;
 		}
 
-		GeneralRegion region = GeneralRegionFlagUtil.createOrParseRegion(context, this.regionFlag);
+		GeneralRegion region = RegionFlagUtil.createOrParseRegion(context, this.regionFlag);
 		String profile = SignProfileUtil.getOrParseProfile(context, this.plugin);
 		Optional<RegionSign> optionalRegionSign = this.signManager.signFromLocation(block.getLocation());
 		if(optionalRegionSign.isPresent()) {
