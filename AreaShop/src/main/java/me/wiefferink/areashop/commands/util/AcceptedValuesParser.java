@@ -32,15 +32,6 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
         this.caseSensitive = caseSensitive;
     }
 
-    private static Collection<Suggestion> provideSuggestions(@Nonnull List<String> values,
-                                                             @Nonnull CommandInput input) {
-        String text = input.peekString();
-        return values.stream()
-                .filter(s -> s.startsWith(text))
-                .map(Suggestion::simple)
-                .toList();
-    }
-
     public static <C> AcceptedValuesParser<C> ofConstant(
             @Nonnull Collection<String> acceptedValues,
             @Nonnull String failureMessageKey,
