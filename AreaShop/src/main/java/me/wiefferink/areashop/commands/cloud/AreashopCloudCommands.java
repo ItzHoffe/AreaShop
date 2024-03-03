@@ -1,14 +1,12 @@
 package me.wiefferink.areashop.commands.cloud;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.util.ArgumentParseExceptionHandler;
 import me.wiefferink.areashop.commands.util.AreaShopCommandException;
+import me.wiefferink.areashop.commands.util.ArgumentParseExceptionHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -20,7 +18,6 @@ import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
-import org.incendo.cloud.processors.cache.CloudCache;
 import org.incendo.cloud.processors.cache.GuavaCache;
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
 import org.incendo.cloud.processors.confirmation.ConfirmationManager;
@@ -79,19 +76,22 @@ public class AreashopCloudCommands {
         }
         ExceptionController<CommandSender> exceptionController = this.commandManager.exceptionController();
         // We need to unwrap ArgumentParseException because they wrap the custom exception messages
-        exceptionController.registerHandler(ArgumentParseException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
-        exceptionController.registerHandler(CommandExecutionException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
+        exceptionController.registerHandler(ArgumentParseException.class,
+                ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
+        exceptionController.registerHandler(CommandExecutionException.class,
+                ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
         exceptionController.registerHandler(AreaShopCommandException.class,
                 new ArgumentParseExceptionHandler<>(this.messageBridge));
         var confirmationConfiguration = ConfirmationConfiguration.<CommandSender>builder()
                 .cache(GuavaCache.of(CacheBuilder.newBuilder().build()))
-                .noPendingCommandNotifier(x -> {})
-                .confirmationRequiredNotifier((x, y) -> {})
+                .noPendingCommandNotifier(x -> {
+                })
+                .confirmationRequiredNotifier((x, y) -> {
+                })
                 .build();
         ConfirmationManager<CommandSender> confirmationManager = ConfirmationManager.of(confirmationConfiguration);
         commandManager.registerCommandPostProcessor(confirmationManager.createPostprocessor());
     }
-
 
 
 }
