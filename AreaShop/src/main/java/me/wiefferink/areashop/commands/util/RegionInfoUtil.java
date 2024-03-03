@@ -9,16 +9,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
 public class RegionInfoUtil {
 
     public static void showRegionInfo(
-            @NonNull MessageBridge messageBridge,
-            @NonNull IFileManager fileManager,
-            @NonNull CommandSender sender,
-            @NonNull OfflinePlayer owner
+            @Nonnull MessageBridge messageBridge,
+            @Nonnull IFileManager fileManager,
+            @Nonnull CommandSender sender,
+            @Nonnull OfflinePlayer owner
     ) {
         // Get the regions owned by the player
         Set<RentRegion> rentRegions = new HashSet<>();

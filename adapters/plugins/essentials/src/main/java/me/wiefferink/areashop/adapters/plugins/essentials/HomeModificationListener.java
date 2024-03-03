@@ -25,6 +25,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class HomeModificationListener implements Listener {
@@ -38,10 +39,10 @@ public class HomeModificationListener implements Listener {
     @AssistedInject
     public HomeModificationListener(
             @Assisted AccessControlValidator validator,
-            @NonNull IFileManager fileManager,
-            @NonNull WorldGuardInterface worldGuardInterface,
-            @NonNull MessageBridge messageBridge,
-            @NonNull Server server
+            @Nonnull IFileManager fileManager,
+            @Nonnull WorldGuardInterface worldGuardInterface,
+            @Nonnull MessageBridge messageBridge,
+            @Nonnull Server server
     ) {
         this.accessControlValidator = validator;
         this.fileManager = fileManager;
@@ -51,7 +52,7 @@ public class HomeModificationListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onHomeModification(@NonNull final HomeModifyEvent event) {
+    public void onHomeModification(@Nonnull final HomeModifyEvent event) {
         final IUser homeOwner = event.getHomeOwner();
         final HomeModifyEvent.HomeModifyCause cause = event.getCause();
         if (cause != HomeModifyEvent.HomeModifyCause.UPDATE && cause != HomeModifyEvent.HomeModifyCause.CREATE) {
@@ -70,9 +71,9 @@ public class HomeModificationListener implements Listener {
     }
 
     private void processHomeModification(
-            @NonNull Cancellable event,
-            @NonNull IUser homeOwner,
-            @NonNull ProtectedRegion protectedRegion) {
+            @Nonnull Cancellable event,
+            @Nonnull IUser homeOwner,
+            @Nonnull ProtectedRegion protectedRegion) {
         final GeneralRegion region = this.fileManager.getRegion(protectedRegion.getId());
         if (region == null) {
             return;

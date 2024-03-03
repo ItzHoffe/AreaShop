@@ -17,6 +17,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.flag.CommandFlag;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class WorldGuardRegionParser<C extends Entity> implements ArgumentParser<C, ProtectedRegion> {
@@ -24,16 +25,16 @@ public class WorldGuardRegionParser<C extends Entity> implements ArgumentParser<
     private final CommandFlag<World> worldFlag;
 
     public WorldGuardRegionParser(
-            @NonNull CommandFlag<World> worldFlag,
-            @NonNull WorldGuardInterface worldGuardInterface
+            @Nonnull CommandFlag<World> worldFlag,
+            @Nonnull WorldGuardInterface worldGuardInterface
     ) {
         this.worldFlag = worldFlag;
         this.worldGuardInterface = worldGuardInterface;
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull ProtectedRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
-                                                                        @NonNull CommandInput commandInput) {
+    public @Nonnull ArgumentParseResult<ProtectedRegion> parse(@Nonnull CommandContext<C> commandContext,
+                                                                        @Nonnull CommandInput commandInput) {
         World world = WorldFlagUtil.parseOrDetectWorld(commandContext, worldFlag);
         String regionName = commandInput.peekString();
         RegionManager regionManager = this.worldGuardInterface.getRegionManager(world);
@@ -50,7 +51,7 @@ public class WorldGuardRegionParser<C extends Entity> implements ArgumentParser<
     }
 
     @Override
-    public @NonNull SuggestionProvider<C> suggestionProvider() {
+    public @Nonnull SuggestionProvider<C> suggestionProvider() {
         return SuggestionProvider.blockingStrings((commandContext, input) -> {
             C sender = commandContext.sender();
             if (!(sender instanceof Player player)) {

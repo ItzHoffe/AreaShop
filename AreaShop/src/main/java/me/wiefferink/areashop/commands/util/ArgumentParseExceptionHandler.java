@@ -5,16 +5,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 
+import javax.annotation.Nonnull;
+
 public class ArgumentParseExceptionHandler<C> implements ExceptionHandler<C, AreaShopCommandException> {
 
     private final MessageBridge messageBridge;
 
-    public ArgumentParseExceptionHandler(@NonNull MessageBridge messageBridge) {
+    public ArgumentParseExceptionHandler(@Nonnull MessageBridge messageBridge) {
         this.messageBridge = messageBridge;
     }
 
     @Override
-    public void handle(@NonNull ExceptionContext<C, AreaShopCommandException> context) {
+    public void handle(@Nonnull ExceptionContext<C, AreaShopCommandException> context) {
         AreaShopCommandException parseException = context.exception();
         String key = parseException.messageKey();
         Object[] replacements = parseException.replacements();

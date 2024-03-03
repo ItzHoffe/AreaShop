@@ -4,13 +4,14 @@ import me.wiefferink.areashop.features.FriendsFeature;
 import me.wiefferink.areashop.regions.GeneralRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class OwnershipControlValidator implements AccessControlValidator {
 
-    public boolean canAccess(@NonNull final UUID player,
-                             @NonNull final GeneralRegion region,
-                             @NonNull final HomeAccessType accessType) {
+    public boolean canAccess(@Nonnull final UUID player,
+                             @Nonnull final GeneralRegion region,
+                             @Nonnull final HomeAccessType accessType) {
         return switch (accessType) {
             case ANY -> true;
             case NONE -> region.isOwner(player);
@@ -18,8 +19,8 @@ public class OwnershipControlValidator implements AccessControlValidator {
         };
     }
 
-    private boolean canAccessMembers(@NonNull final UUID player,
-                                     @NonNull final GeneralRegion region) {
+    private boolean canAccessMembers(@Nonnull final UUID player,
+                                     @Nonnull final GeneralRegion region) {
         if (region.isOwner(player)) {
             return true;
         }

@@ -10,6 +10,7 @@ import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;
 import org.incendo.cloud.parser.standard.StringParser;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -26,8 +27,8 @@ public final class SignProfileUtil {
         throw new IllegalArgumentException("Static utility class cannot be instantiated");
     }
 
-    @NonNull
-    public static CommandFlag<String> createDefault(@NonNull Plugin plugin) {
+    @Nonnull
+    public static CommandFlag<String> createDefault(@Nonnull Plugin plugin) {
         Supplier<Collection<String>> valueSupplier = () -> {
             ConfigurationSection section = plugin.getConfig().getConfigurationSection("signProfiles");
             if (section == null) {
@@ -45,16 +46,16 @@ public final class SignProfileUtil {
     }
 
     @Nullable
-    public static String getOrParseProfile(@NonNull CommandContext<? extends CommandSender> context,
-                                           @NonNull Plugin plugin) {
+    public static String getOrParseProfile(@Nonnull CommandContext<? extends CommandSender> context,
+                                           @Nonnull Plugin plugin) {
         return getOrParseProfile(context, DEFAULT_FLAG, plugin);
     }
 
     @Nullable
     public static String getOrParseProfile(
-            @NonNull CommandContext<? extends CommandSender> context,
-            @NonNull CommandFlag<String> flag,
-            @NonNull Plugin plugin
+            @Nonnull CommandContext<? extends CommandSender> context,
+            @Nonnull CommandFlag<String> flag,
+            @Nonnull Plugin plugin
     ) throws AreaShopCommandException {
         String profile = context.flags().get(flag);
         if (profile == null) {

@@ -15,6 +15,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,17 +25,17 @@ public final class RegionFlagUtil {
         throw new IllegalStateException("Cannot instantiate static utility class");
     }
 
-    @NonNull
-    public static CommandFlag<GeneralRegion> createDefault(@NonNull IFileManager fileManager) {
+    @Nonnull
+    public static CommandFlag<GeneralRegion> createDefault(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new GeneralRegionParser<>(fileManager), GeneralRegion.class))
                 .build();
     }
 
-    @NonNull
+    @Nonnull
     public static Collection<GeneralRegion> getOrParseRegionsInSel(
-            @NonNull CommandContext<CommandSender> context,
-            @NonNull CommandFlag<GeneralRegion> regionFlag
+            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandFlag<GeneralRegion> regionFlag
     ) {
         CommandSender sender = context.sender();
         if (!(sender instanceof Player player)) {
@@ -53,10 +54,10 @@ public final class RegionFlagUtil {
         throw new AreaShopCommandException("cmd-noRegionsAtLocation");
     }
 
-    @NonNull
+    @Nonnull
     public static <C> GeneralRegion getOrParseRegion(
-            @NonNull CommandContext<C> context,
-            @NonNull CommandFlag<GeneralRegion> flag
+            @Nonnull CommandContext<C> context,
+            @Nonnull CommandFlag<GeneralRegion> flag
     ) throws AreaShopCommandException {
         GeneralRegion region = context.flags().get(flag);
         if (region != null) {
@@ -80,19 +81,19 @@ public final class RegionFlagUtil {
     }
 
 
-    public static CommandFlag<BuyRegion> createDefaultBuy(@NonNull IFileManager fileManager) {
+    public static CommandFlag<BuyRegion> createDefaultBuy(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new BuyRegionParser<>(fileManager), BuyRegion.class))
                 .build();
     }
     
-    public static CommandFlag<RentRegion> createDefaultRent(@NonNull IFileManager fileManager) {
+    public static CommandFlag<RentRegion> createDefaultRent(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new RentRegionParser<>(fileManager), RentRegion.class))
                 .build();
     }
     
-    public static BuyRegion getOrParseBuyRegion(@NonNull CommandContext<Player> context, CommandFlag<BuyRegion> flag) {
+    public static BuyRegion getOrParseBuyRegion(@Nonnull CommandContext<Player> context, CommandFlag<BuyRegion> flag) {
         BuyRegion buyRegion = context.flags().get(flag);
         if (buyRegion != null) {
             return buyRegion;
@@ -106,7 +107,7 @@ public final class RegionFlagUtil {
         return regions.get(0);
     }
 
-    public static RentRegion getOrParseRentRegion(@NonNull CommandContext<Player> context, CommandFlag<RentRegion> flag) {
+    public static RentRegion getOrParseRentRegion(@Nonnull CommandContext<Player> context, CommandFlag<RentRegion> flag) {
         RentRegion rentRegion = context.flags().get(flag);
         if (rentRegion != null) {
             return rentRegion;

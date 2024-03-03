@@ -8,6 +8,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -16,14 +17,14 @@ import java.util.function.Supplier;
 
 public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, SuggestionProvider<C> {
 
-    private final Supplier<@NonNull Collection<String>> valuesProvider;
+    private final Supplier< Collection<String>> valuesProvider;
     private final boolean caseSensitive;
 
     private final String failureMessageKey;
 
     private AcceptedValuesParser(
-            @NonNull Supplier<@NonNull Collection<String>> valuesProvider,
-            @NonNull String failureMessageKey,
+            @Nonnull Supplier< Collection<String>> valuesProvider,
+            @Nonnull String failureMessageKey,
             boolean caseSensitive
 
     ) {
@@ -32,8 +33,8 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
         this.caseSensitive = caseSensitive;
     }
 
-    private static Collection<Suggestion> provideSuggestions(@NonNull List<String> values,
-                                                             @NonNull CommandInput input) {
+    private static Collection<Suggestion> provideSuggestions(@Nonnull List<String> values,
+                                                             @Nonnull CommandInput input) {
         String text = input.peekString();
         return values.stream()
                 .filter(s -> s.startsWith(text))
@@ -42,8 +43,8 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
     }
 
     public static <C> AcceptedValuesParser<C> ofConstant(
-            @NonNull Collection<String> acceptedValues,
-            @NonNull String failureMessageKey,
+            @Nonnull Collection<String> acceptedValues,
+            @Nonnull String failureMessageKey,
             boolean caseSensitive
     ) {
         Collection<String> copy = List.copyOf(acceptedValues);
@@ -51,24 +52,24 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
     }
 
     public static <C> AcceptedValuesParser<C> of(
-            @NonNull Supplier<@NonNull Collection<String>> supplier,
-            @NonNull String failureMessageKey,
+            @Nonnull Supplier< Collection<String>> supplier,
+            @Nonnull String failureMessageKey,
             boolean caseSensitive
     ) {
         return new AcceptedValuesParser<>(supplier, failureMessageKey, caseSensitive);
     }
 
     public static <C> AcceptedValuesParser<C> ofCached(
-            @NonNull Supplier<@NonNull Collection<String>> supplier,
-            @NonNull String failureMessageKey,
+            @Nonnull Supplier< Collection<String>> supplier,
+            @Nonnull String failureMessageKey,
             boolean caseSensitive
     ) {
         return ofConstant(supplier.get(), failureMessageKey, caseSensitive);
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull String> parse(@NonNull CommandContext<@NonNull C> commandContext,
-                                                               @NonNull CommandInput commandInput) {
+    public @Nonnull ArgumentParseResult<String> parse(@Nonnull CommandContext<C> commandContext,
+                                                               @Nonnull CommandInput commandInput) {
         String toTest;
         if (this.caseSensitive) {
             toTest = commandInput.peekString().toLowerCase(Locale.ENGLISH);
@@ -83,9 +84,9 @@ public class AcceptedValuesParser<C> implements ArgumentParser<C, String>, Sugge
     }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(
-            @NonNull CommandContext<C> context,
-            @NonNull CommandInput input
+    public @Nonnull CompletableFuture<Iterable<Suggestion>> suggestionsFuture(
+            @Nonnull CommandContext<C> context,
+            @Nonnull CommandInput input
     ) {
         String text = input.peekString();
         Iterable<Suggestion> suggestions = this.valuesProvider.get().stream()

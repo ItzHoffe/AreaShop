@@ -3,6 +3,7 @@ package me.wiefferink.areashop.features.homeaccess;
 import me.wiefferink.areashop.regions.GeneralRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 @FunctionalInterface
@@ -17,17 +18,17 @@ public interface AccessControlValidator {
      * @return true if a player is permitted to set a home, false otherwise.
      */
     boolean canAccess(
-            @NonNull final UUID player,
-            @NonNull final GeneralRegion region,
-            @NonNull final HomeAccessType accessType
+            @Nonnull final UUID player,
+            @Nonnull final GeneralRegion region,
+            @Nonnull final HomeAccessType accessType
     );
 
-    default AccessControlValidator and(@NonNull final AccessControlValidator other) {
+    default AccessControlValidator and(@Nonnull final AccessControlValidator other) {
         return (player, region, accessType) -> this.canAccess(player, region, accessType)
                 && other.canAccess(player, region, accessType);
     }
 
-    default AccessControlValidator or(@NonNull final AccessControlValidator other) {
+    default AccessControlValidator or(@Nonnull final AccessControlValidator other) {
         return (player, region, accessType) -> this.canAccess(player, region, accessType)
                 || other.canAccess(player, region, accessType);
     }

@@ -22,6 +22,7 @@ import org.incendo.cloud.processors.cache.GuavaCache;
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
 import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @Singleton
@@ -50,7 +51,7 @@ public class AreashopCloudCommands {
     private final PaperCommandManager<CommandSender> commandManager;
 
     @Inject
-    AreashopCloudCommands(@NonNull Injector injector, @NonNull Plugin plugin, @NonNull MessageBridge messageBridge) {
+    AreashopCloudCommands(@Nonnull Injector injector, @Nonnull Plugin plugin, @Nonnull MessageBridge messageBridge) {
         this.injector = injector;
         this.commandManager = new PaperCommandManager<>(
                 plugin,

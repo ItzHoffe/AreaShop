@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.util;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -13,7 +14,7 @@ public class AreaShopCommandException extends RuntimeException {
     private final String messageKey;
     private final Object[] replacements;
 
-    public AreaShopCommandException(@NonNull String messageKey, @Nullable Object... replacements) {
+    public AreaShopCommandException(@Nonnull String messageKey, @Nullable Object... replacements) {
         this.messageKey = messageKey;
         this.replacements = replacements == null ? EMPTY : replacements;
     }

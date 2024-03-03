@@ -32,13 +32,13 @@ public class BuyCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("buy");
     }
 
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder
                 .literal("buy")
                 .permission("areashop.buy")
@@ -47,7 +47,7 @@ public class BuyCloudCommand extends CloudCommandBean {
                 .handler(this::handleCommand);
     }
 
-    private void handleCommand(@NonNull CommandContext<Player> context) {
+    private void handleCommand(@Nonnull CommandContext<Player> context) {
         BuyRegion region = RegionFlagUtil.getOrParseBuyRegion(context, this.buyRegionFlag);
         region.buy(context.sender());
     }

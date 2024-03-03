@@ -68,19 +68,19 @@ public class DelFriendCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("deletefriend", "delfriend");
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("deletefriend", "delfriend")
                 .required(KEY_PLAYER, OfflinePlayerParser.offlinePlayerParser(), this::suggestFriends)
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);
     }
 
-    private void handleCommand(@NonNull CommandContext<CommandSender> context) {
+    private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.delfriend") && !sender.hasPermission("areashop.delfriendall")) {
             throw new AreaShopCommandException("delfriend-noPermission");
@@ -120,7 +120,7 @@ public class DelFriendCloudCommand extends CloudCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestFriends(
-            @NonNull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<CommandSender> context,
             @Nonnull CommandInput input
     ) {
         CommandSender sender = context.sender();

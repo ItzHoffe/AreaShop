@@ -10,17 +10,19 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+import javax.annotation.Nonnull;
+
 public class BuyRegionParser<C> implements ArgumentParser<C, BuyRegion> {
 
     private final IFileManager fileManager;
 
-    public BuyRegionParser(@NonNull IFileManager fileManager) {
+    public BuyRegionParser(@Nonnull IFileManager fileManager) {
         this.fileManager = fileManager;
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull BuyRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
-                                                                  @NonNull CommandInput commandInput) {
+    public @Nonnull ArgumentParseResult<BuyRegion> parse(@Nonnull CommandContext<C> commandContext,
+                                                                  @Nonnull CommandInput commandInput) {
         String input = commandInput.peekString();
         BuyRegion region = this.fileManager.getBuy(input);
         if (region != null) {
@@ -32,7 +34,7 @@ public class BuyRegionParser<C> implements ArgumentParser<C, BuyRegion> {
     }
 
     @Override
-    public @NonNull SuggestionProvider<C> suggestionProvider() {
+    public @Nonnull SuggestionProvider<C> suggestionProvider() {
         return SuggestionProvider.blockingStrings((ctx, input) -> {
                     String text = input.peekString();
                     return this.fileManager.getBuyNames()

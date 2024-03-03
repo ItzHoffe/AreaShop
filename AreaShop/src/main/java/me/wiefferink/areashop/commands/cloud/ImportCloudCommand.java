@@ -42,7 +42,7 @@ public class ImportCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         withConfirmation();
         var sourceParser = AcceptedValuesParser.ofConstant(List.of("RegionForSale"), "import-wrongSource", true);
         return builder.literal("import")
@@ -52,7 +52,7 @@ public class ImportCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("import");
     }
 
@@ -62,7 +62,7 @@ public class ImportCloudCommand extends CloudCommandBean {
     //  - Region flags?
     //  - Settings from the 'permissions' section in RegionForSale/config.yml?
 
-    private void handleCommand(@NonNull CommandContext<CommandSender> context) {
+    private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.import")) {
             messageBridge.message(sender, "import-noPermission");

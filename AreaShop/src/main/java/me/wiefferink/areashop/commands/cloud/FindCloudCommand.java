@@ -63,7 +63,7 @@ public class FindCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("find")
                 .permission("areashop.find")
                 .senderType(Player.class)
@@ -74,11 +74,11 @@ public class FindCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("find");
     }
 
-    private void handleCommand(@NonNull CommandContext<Player> context) {
+    private void handleCommand(@Nonnull CommandContext<Player> context) {
         Player sender = context.sender();
         double balance;
         if (economy != null) {
@@ -102,7 +102,7 @@ public class FindCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void handleBuy(@NonNull Player sender,
+    private void handleBuy(@Nonnull Player sender,
                            double balance,
                            double maxPrice,
                            boolean maxPriceSet,
@@ -140,7 +140,7 @@ public class FindCloudCommand extends CloudCommandBean {
     }
 
     private void handleRent(
-            @NonNull CommandSender sender,
+            @Nonnull CommandSender sender,
             double balance,
             double maxPrice,
             boolean maxPriceSet,

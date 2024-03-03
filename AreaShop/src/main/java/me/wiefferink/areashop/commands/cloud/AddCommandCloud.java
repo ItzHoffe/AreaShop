@@ -37,6 +37,7 @@ import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -63,11 +64,11 @@ public class AddCommandCloud extends CloudCommandBean {
 
     @Inject
     public AddCommandCloud(
-            @NonNull MessageBridge messageBridge,
-            @NonNull AreaShop plugin,
-            @NonNull WorldEditInterface worldEditInterface,
-            @NonNull WorldGuardInterface worldGuardInterface,
-            @NonNull RegionFactory regionFactory) {
+            @Nonnull MessageBridge messageBridge,
+            @Nonnull AreaShop plugin,
+            @Nonnull WorldEditInterface worldEditInterface,
+            @Nonnull WorldGuardInterface worldGuardInterface,
+            @Nonnull RegionFactory regionFactory) {
         this.messageBridge = messageBridge;
         this.plugin = plugin;
         this.worldEditInterface = worldEditInterface;
@@ -76,7 +77,7 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         // /as add <rent|buy> [region] [world]
         ParserDescriptor<Entity, ProtectedRegion> wgRegionParser = ParserDescriptor.of(new WorldGuardRegionParser<>(
                 WorldFlagUtil.DEFAULT_WORLD_FLAG,
@@ -119,9 +120,9 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private AddTaskState createState(
-            @NonNull Player player,
-            GeneralRegion.@NonNull RegionType regionType,
-            @NonNull World world
+            @Nonnull Player player,
+            @Nonnull GeneralRegion.RegionType regionType,
+            @Nonnull World world
     ) {
         Set<GeneralRegion> regionsSuccess = new TreeSet<>();
         Set<GeneralRegion> regionsAlready = new TreeSet<>();
@@ -146,8 +147,8 @@ public class AddCommandCloud extends CloudCommandBean {
         );
     }
 
-    private void processEntry(Map.@NonNull Entry<String, ProtectedRegion> regionEntry,
-                              AddCommandCloud.@NonNull AddTaskState taskState) {
+    private void processEntry(@Nonnull Map.Entry<String, ProtectedRegion> regionEntry,
+                              @Nonnull AddTaskState taskState) {
         Player player = taskState.sender();
         Set<GeneralRegion> regionsAlready = taskState.regionsAlready();
         Set<GeneralRegion> regionsAlreadyOtherWorld = taskState.regionsAlreadyOtherWorld();
@@ -192,13 +193,13 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private void debugResult(
-            @NonNull Player player,
-            @NonNull String regionName,
+            @Nonnull Player player,
+            @Nonnull String regionName,
             boolean landlord,
             List<UUID> existing,
             boolean isMember,
             boolean isOwner,
-            GeneralRegion.@NonNull RegionType regionType
+            @Nonnull GeneralRegion.RegionType regionType
     ) {
         String type = regionType.name().toLowerCase(Locale.ENGLISH);
         AreaShop.debug("regionAddLandlordStatus:",
@@ -219,7 +220,7 @@ public class AddCommandCloud extends CloudCommandBean {
                 player.hasPermission("areashop.create" + type + ".member"));
     }
 
-    private void onCompletion(AddCommandCloud.@NonNull AddTaskState taskState) {
+    private void onCompletion(@Nonnull AddTaskState taskState) {
         CommandSender player = taskState.sender();
         GeneralRegion.RegionType regionType = taskState.regionType;
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
@@ -275,10 +276,10 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private void processRent(
-            @NonNull ProtectedRegion region,
+            @Nonnull ProtectedRegion region,
             boolean landlord,
             List<UUID> existing,
-            @NonNull AddTaskState taskState
+            @Nonnull AddTaskState taskState
     ) {
         Player player = taskState.sender();
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
@@ -334,10 +335,10 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     private void proccessBuy(
-            @NonNull ProtectedRegion region,
+            @Nonnull ProtectedRegion region,
             boolean landlord,
             List<UUID> existing,
-            @NonNull AddTaskState taskState
+            @Nonnull AddTaskState taskState
     ) {
         Player player = taskState.sender();
         Set<GeneralRegion> regionsSuccess = taskState.regionsSuccess();
@@ -409,22 +410,22 @@ public class AddCommandCloud extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("add");
     }
 
     private record AddTaskState(
-            @NonNull Player sender,
-            GeneralRegion.@NonNull RegionType regionType,
-            @NonNull Set<GeneralRegion> regionsSuccess,
-            @NonNull Set<GeneralRegion> regionsAlready,
-            @NonNull Set<GeneralRegion> regionsAlreadyOtherWorld,
-            @NonNull Set<GeneralRegion> regionsRentCancelled,
-            @NonNull Set<GeneralRegion> regionsBuyCancelled,
-            @NonNull Set<String> namesBlacklisted,
-            @NonNull Set<String> namesNoPermission,
-            @NonNull Set<String> namesAddCancelled,
-            @NonNull World world) {
+            @Nonnull Player sender,
+            @Nonnull GeneralRegion.RegionType regionType,
+            @Nonnull Set<GeneralRegion> regionsSuccess,
+            @Nonnull Set<GeneralRegion> regionsAlready,
+            @Nonnull Set<GeneralRegion> regionsAlreadyOtherWorld,
+            @Nonnull Set<GeneralRegion> regionsRentCancelled,
+            @Nonnull Set<GeneralRegion> regionsBuyCancelled,
+            @Nonnull Set<String> namesBlacklisted,
+            @Nonnull Set<String> namesNoPermission,
+            @Nonnull Set<String> namesAddCancelled,
+            @Nonnull World world) {
     }
 }
 

@@ -69,9 +69,9 @@ public class InfoCloudCommand extends CloudCommandBean {
     public InfoCloudCommand(
             @Nonnull MessageBridge messageBridge,
             @Nonnull IFileManager fileManager,
-            @NonNull Server server,
-            @NonNull OfflinePlayerHelper offlinePlayerHelper,
-            @NonNull BukkitSchedulerExecutor executor
+            @Nonnull Server server,
+            @Nonnull OfflinePlayerHelper offlinePlayerHelper,
+            @Nonnull BukkitSchedulerExecutor executor
     ) {
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
@@ -90,7 +90,7 @@ public class InfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("info")
                 .required(KEY_TYPE, EnumParser.enumParser(RegionStateFilterType.class))
                 .optional(KEY_FILTER_ARG, StringParser.stringParser(), this::suggestFilterArg)
@@ -99,13 +99,13 @@ public class InfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("info");
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestFilterArg(
-            @NonNull CommandContext<CommandSender> context,
-            @NonNull CommandInput commandInput) {
+            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandInput commandInput) {
         Optional<RegionStateFilterType> filterType = context.optional(KEY_TYPE);
         if (filterType.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
@@ -120,7 +120,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         return CompletableFuture.completedFuture(suggestions);
     }
 
-    private void handleCommand(@NonNull CommandContext<CommandSender> context) {
+    private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.info")) {
             messageBridge.message(sender, "info-noPermission");
@@ -136,8 +136,8 @@ public class InfoCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void processOtherFilters(@NonNull CommandContext<CommandSender> context,
-                                     @NonNull RegionStateFilterType filterType) {
+    private void processOtherFilters(@Nonnull CommandContext<CommandSender> context,
+                                     @Nonnull RegionStateFilterType filterType) {
         RegionGroup filterGroup = context.flags().get(this.filterGroupFlag);
         int page = context.flags().getValue(FLAG_PAGE).orElse(1);
         Stream<? extends GeneralRegion> toShow = switch (filterType) {
@@ -179,7 +179,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         showSortedPagedList(context.sender(), toShow, filterGroup, header, page, baseCommand);
     }
 
-    private void processWithPlayerFilter(@NonNull CommandContext<CommandSender> context) {
+    private void processWithPlayerFilter(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         Optional<String> optionalArg = context.optional(KEY_FILTER_ARG);
         if (optionalArg.isEmpty()) {
@@ -197,7 +197,7 @@ public class InfoCloudCommand extends CloudCommandBean {
 
     }
 
-    private void processWithRegionFilter(@NonNull CommandContext<CommandSender> context) {
+    private void processWithRegionFilter(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         // Region info
         Optional<String> optionalArg = context.optional(KEY_FILTER_ARG);
@@ -227,7 +227,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void handleBuy(@NonNull CommandSender sender, @NonNull BuyRegion buy) {
+    private void handleBuy(@Nonnull CommandSender sender, @Nonnull BuyRegion buy) {
         messageBridge.message(sender, "info-regionHeaderBuy", buy);
         if (buy.isSold()) {
             if (buy.isInResellingMode()) {
@@ -279,7 +279,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         messageBridge.messageNoPrefix(sender, "info-regionFooterBuy", buy);
     }
 
-    private void handleRent(@NonNull CommandSender sender, @NonNull RentRegion rent) {
+    private void handleRent(@Nonnull CommandSender sender, @Nonnull RentRegion rent) {
         messageBridge.message(sender, "info-regionHeaderRent", rent);
         if (rent.isRented()) {
             messageBridge.messageNoPrefix(sender, "info-regionRented", rent);
@@ -340,13 +340,13 @@ public class InfoCloudCommand extends CloudCommandBean {
         messageBridge.messageNoPrefix(sender, "info-regionFooterRent", rent);
     }
 
-    private void displayMiscInfo(@NonNull CommandSender sender, @NonNull GeneralRegion region) {
+    private void displayMiscInfo(@Nonnull CommandSender sender, @Nonnull GeneralRegion region) {
         displayTeleportInfo(sender, region);
         displaySignInfo(sender, region);
         displayGroupInfo(sender, region);
     }
 
-    private void displayGroupInfo(@NonNull CommandSender sender, @NonNull GeneralRegion region) {// Groups
+    private void displayGroupInfo(@Nonnull CommandSender sender, @Nonnull GeneralRegion region) {// Groups
         if (sender.hasPermission("areashop.groupinfo") && !region.getGroupNames().isEmpty()) {
             messageBridge.messageNoPrefix(sender,
                     "info-regionGroups",
@@ -354,7 +354,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void displaySignInfo(@NonNull CommandSender sender, @NonNull GeneralRegion region) {
+    private void displaySignInfo(@Nonnull CommandSender sender, @Nonnull GeneralRegion region) {
         // Signs
         List<String> signLocations = new ArrayList<>();
         for (BlockPosition location : region.getSignsFeature().signManager().allSignLocations()) {
@@ -372,7 +372,7 @@ public class InfoCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void displayTeleportInfo(@NonNull CommandSender sender, @NonNull GeneralRegion region) {
+    private void displayTeleportInfo(@Nonnull CommandSender sender, @Nonnull GeneralRegion region) {
         // Teleport
         Message tp = Message.fromKey("info-prefix");
         boolean foundSomething = false;

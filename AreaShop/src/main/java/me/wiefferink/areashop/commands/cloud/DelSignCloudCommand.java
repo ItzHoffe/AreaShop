@@ -40,13 +40,13 @@ public class DelSignCloudCommand extends CloudCommandBean {
 	}
 
 
-	@Override
-	protected @NonNull CommandProperties properties() {
+    @Override
+    protected @Nonnull CommandProperties properties() {
 		return CommandProperties.of("deletesign", "delsign");
 	}
 
 	@Override
-	protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("deletesign", "delsign")
 				.permission("delsign-noPermission")
 				.senderType(Player.class)

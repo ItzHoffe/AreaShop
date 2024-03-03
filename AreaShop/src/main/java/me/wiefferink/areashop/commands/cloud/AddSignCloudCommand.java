@@ -54,7 +54,7 @@ public class AddSignCloudCommand extends CloudCommandBean {
 	}
 
 	@Override
-	protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("addsign")
 				.senderType(Player.class)
 				.permission("areashop.addsign")
@@ -63,7 +63,7 @@ public class AddSignCloudCommand extends CloudCommandBean {
 				.handler(this::handleCommand);
 	}
 
-	private void handleCommand(@NonNull CommandContext<Player> context) {
+	private void handleCommand(@Nonnull CommandContext<Player> context) {
 		Player sender = context.sender();
 		// Get the sign
 		Block block = null;
@@ -98,8 +98,8 @@ public class AddSignCloudCommand extends CloudCommandBean {
 	}
 
 
-	@Override
-	protected @NonNull CommandProperties properties() {
+    @Override
+    protected @Nonnull CommandProperties properties() {
 		return CommandProperties.of("addsign");
 	}
 }

@@ -56,12 +56,12 @@ public class DelCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("delete", "del");
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         ParserDescriptor<CommandSender, GeneralRegion> regionParser = ParserDescriptor.of(
                 new GeneralRegionParser<>(this.fileManager),
                 GeneralRegion.class
@@ -71,7 +71,7 @@ public class DelCloudCommand extends CloudCommandBean {
                 .handler(this::handleCommand);
     }
 
-    public void handleCommand(@NonNull CommandContext<CommandSender> context) {
+    public void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.destroybuy")
                 && !sender.hasPermission("areashop.destroybuy.landlord")
@@ -101,7 +101,7 @@ public class DelCloudCommand extends CloudCommandBean {
         handleMassDeletion(player, regions);
     }
 
-    private void handleSingleDeletion(@NonNull CommandSender sender, GeneralRegion region) {
+    private void handleSingleDeletion(@Nonnull CommandSender sender, GeneralRegion region) {
         boolean isLandlord = sender instanceof Player player && region.isLandlord(player.getUniqueId());
         if (region instanceof RentRegion) {
             // Remove the rent if the player has permission
@@ -132,7 +132,7 @@ public class DelCloudCommand extends CloudCommandBean {
         }
     }
 
-    private void handleMassDeletion(@NonNull Player sender, @NonNull List<GeneralRegion> regions) {
+    private void handleMassDeletion(@Nonnull Player sender, @Nonnull List<GeneralRegion> regions) {
         List<String> namesSuccess = new ArrayList<>();
         Set<GeneralRegion> regionsFailed = new TreeSet<>();
         Set<GeneralRegion> regionsCancelled = new TreeSet<>();
@@ -162,7 +162,7 @@ public class DelCloudCommand extends CloudCommandBean {
         }
     }
 
-    private boolean cannotDelete(@NonNull Player sender, @NonNull GeneralRegion region) {
+    private boolean cannotDelete(@Nonnull Player sender, @Nonnull GeneralRegion region) {
         boolean isLandlord = region.isLandlord(sender.getUniqueId());
         if (region instanceof RentRegion
                 && (!sender.hasPermission("areashop.destroyrent") && !(isLandlord && sender.hasPermission(

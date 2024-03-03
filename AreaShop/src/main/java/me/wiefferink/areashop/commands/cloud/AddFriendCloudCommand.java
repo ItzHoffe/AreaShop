@@ -20,6 +20,8 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.flag.CommandFlag;
 
+import javax.annotation.Nonnull;
+
 @Singleton
 public class AddFriendCloudCommand extends CloudCommandBean {
 
@@ -30,9 +32,9 @@ public class AddFriendCloudCommand extends CloudCommandBean {
 
     @Inject
     public AddFriendCloudCommand(
-            @NonNull MessageBridge messageBridge,
-            @NonNull IFileManager fileManager,
-            @NonNull Plugin plugin
+            @Nonnull MessageBridge messageBridge,
+            @Nonnull IFileManager fileManager,
+            @Nonnull Plugin plugin
     ) {
         this.messageBridge = messageBridge;
         this.plugin = plugin;
@@ -52,7 +54,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("addfriend")
                 .senderType(Player.class)
                 .required(KEY_FRIEND, OfflinePlayerParser.offlinePlayerParser())
@@ -96,7 +98,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("addfriend");
     }
 }

@@ -57,7 +57,7 @@ public class GroupDelCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("groupdel")
                 .permission("areashop.groupdel")
                 .required(KEY_GROUP, StringParser.stringParser(), this::suggestGroupNames)
@@ -66,7 +66,7 @@ public class GroupDelCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("groupdel");
     }
 
@@ -119,8 +119,8 @@ public class GroupDelCloudCommand extends CloudCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestGroupNames(
-            @NonNull CommandContext<CommandSender> context,
-            @NonNull CommandInput input
+            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandInput input
     ) {
         String text = input.peekString();
         List<Suggestion> suggestions = this.fileManager.getGroupNames().stream()

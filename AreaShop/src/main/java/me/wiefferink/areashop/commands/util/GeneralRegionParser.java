@@ -10,17 +10,19 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+import javax.annotation.Nonnull;
+
 public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion>  {
 
     protected final IFileManager fileManager;
 
-    public GeneralRegionParser(@NonNull IFileManager fileManager) {
+    public GeneralRegionParser(@Nonnull IFileManager fileManager) {
         this.fileManager = fileManager;
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull GeneralRegion> parse(@NonNull CommandContext<@NonNull C> commandContext,
-                                                                      @NonNull CommandInput commandInput) {
+    public @Nonnull ArgumentParseResult<GeneralRegion> parse(@Nonnull CommandContext<C> commandContext,
+                                                                      @Nonnull CommandInput commandInput) {
         String input = commandInput.peekString();
         GeneralRegion region = this.fileManager.getRegion(input);
         if (region != null) {
@@ -32,7 +34,7 @@ public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion> 
     }
 
     @Override
-    public @NonNull SuggestionProvider<C> suggestionProvider() {
+    public @Nonnull SuggestionProvider<C> suggestionProvider() {
         return SuggestionProvider.blockingStrings((ctx, input) -> this.fileManager.getRegionNames());
     }
 }

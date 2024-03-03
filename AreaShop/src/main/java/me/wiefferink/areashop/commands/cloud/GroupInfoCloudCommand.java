@@ -41,7 +41,7 @@ public class GroupInfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected Command.@NonNull Builder<? extends CommandSender> configureCommand(Command.@NonNull Builder<CommandSender> builder) {
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         ParserDescriptor<CommandSender, RegionGroup> regionGroupParser = ParserDescriptor.of(
                 new RegionGroupParser<>(this.fileManager, "groupinfo-noGroup"),
                 RegionGroup.class);
@@ -54,7 +54,7 @@ public class GroupInfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
-    protected @NonNull CommandProperties properties() {
+    protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("groupinfo");
     }
 

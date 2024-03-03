@@ -10,6 +10,7 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,16 +19,16 @@ public class RegionGroupParser<C> implements ArgumentParser<C, RegionGroup>, Sug
     private final IFileManager fileManager;
     private final String failureMessageKey;
 
-    public RegionGroupParser(@NonNull IFileManager fileManager, @NonNull String failureMessageKey) {
+    public RegionGroupParser(@Nonnull IFileManager fileManager, @Nonnull String failureMessageKey) {
         this.fileManager = fileManager;
         this.failureMessageKey = failureMessageKey;
     }
 
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull RegionGroup> parse(
-            @NonNull CommandContext<@NonNull C> commandContext,
-            @NonNull CommandInput commandInput
+    public @Nonnull ArgumentParseResult<RegionGroup> parse(
+            @Nonnull CommandContext<C> commandContext,
+            @Nonnull CommandInput commandInput
     ) {
         String input = commandInput.peekString();
         RegionGroup regionGroup = this.fileManager.getGroup(input);
@@ -39,9 +40,9 @@ public class RegionGroupParser<C> implements ArgumentParser<C, RegionGroup>, Sug
     }
 
     @Override
-    public @NonNull CompletableFuture<@NonNull Iterable<@NonNull Suggestion>> suggestionsFuture(
-            @NonNull CommandContext<C> context,
-            @NonNull CommandInput input
+    public @Nonnull CompletableFuture<Iterable<Suggestion>> suggestionsFuture(
+            @Nonnull CommandContext<C> context,
+            @Nonnull CommandInput input
     ) {
         String text = input.peekString();
         List<Suggestion> suggestions = this.fileManager.getGroupNames().stream()

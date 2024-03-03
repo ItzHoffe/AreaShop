@@ -7,6 +7,8 @@ import org.incendo.cloud.bean.CommandBean;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 
+import javax.annotation.Nonnull;
+
 /**
  * An extension of {@link CommandBean} which does extra pre-processing of the commands.
  * Adapted from <a href="https://github.com/Incendo/kitchensink">KitchenSink</a>
@@ -20,8 +22,8 @@ public abstract class CloudCommandBean extends CommandBean<CommandSender> {
     }
 
     @Override
-    protected final Command.@NonNull Builder<? extends CommandSender> configure(
-            final Command.@NonNull Builder<CommandSender> builder
+    protected final @Nonnull Command.Builder<? extends CommandSender> configure(
+            final @Nonnull Command.Builder<CommandSender> builder
     ) {
         return this.configureCommand(builder)
                 .meta(CloudKey.of("bukkit_description", String.class), this.stringDescription())
@@ -43,7 +45,7 @@ public abstract class CloudCommandBean extends CommandBean<CommandSender> {
      * @param builder builder to configure
      * @return the updated builder
      */
-    protected abstract Command.@NonNull Builder<? extends CommandSender> configureCommand(
-            Command.@NonNull Builder<CommandSender> builder
+    protected abstract @Nonnull Command.Builder<? extends CommandSender> configureCommand(
+            @Nonnull Command.Builder<CommandSender> builder
     );
 }
