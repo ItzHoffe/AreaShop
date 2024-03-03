@@ -3,17 +3,14 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
-import me.wiefferink.areashop.commands.CommandAreaShop;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Singleton

@@ -3,7 +3,6 @@ package me.wiefferink.areashop.commands.util;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ParserDescriptor;

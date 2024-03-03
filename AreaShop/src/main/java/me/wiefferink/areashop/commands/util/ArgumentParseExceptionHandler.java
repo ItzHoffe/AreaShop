@@ -1,7 +1,6 @@
 package me.wiefferink.areashop.commands.util;
 
 import me.wiefferink.areashop.MessageBridge;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.exception.handling.ExceptionContext;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 

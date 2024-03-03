@@ -1,6 +1,5 @@
 package me.wiefferink.areashop.commands.util;
 
-import me.wiefferink.areashop.interfaces.WorldEditSelection;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -10,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;

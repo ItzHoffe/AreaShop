@@ -1,6 +1,5 @@
 package me.wiefferink.areashop.commands.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;

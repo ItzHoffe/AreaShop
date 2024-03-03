@@ -9,7 +9,6 @@ import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.RegionGroup;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
@@ -17,8 +16,6 @@ import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Singleton
