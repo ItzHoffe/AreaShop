@@ -43,6 +43,7 @@ public class AreashopCloudCommands {
             GroupDelCloudCommand.class,
             GroupInfoCloudCommand.class,
             GroupListCloudCommand.class,
+            InfoCloudCommand.class,
             RentCloudCommand.class
     );
 
