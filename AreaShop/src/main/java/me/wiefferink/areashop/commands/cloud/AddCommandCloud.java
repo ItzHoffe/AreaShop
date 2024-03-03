@@ -233,13 +233,12 @@ public class AddCommandCloud extends CloudCommandBean {
         if (!regionsSuccess.isEmpty()) {
             this.messageBridge.message(player,
                     "add-success",
-
+                    regionType.name().toLowerCase(Locale.ENGLISH),
                     Utils.combinedMessage(regionsSuccess, "region"));
         }
         if (!regionsAlready.isEmpty()) {
             this.messageBridge.message(player,
                     "add-failed",
-                    regionType.name().toLowerCase(Locale.ENGLISH),
                     Utils.combinedMessage(regionsAlready, "region"));
         }
         if (!regionsAlreadyOtherWorld.isEmpty()) {
