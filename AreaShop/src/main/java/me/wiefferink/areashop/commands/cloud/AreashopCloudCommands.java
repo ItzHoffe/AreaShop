@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.exception.ArgumentParseException;
+import org.incendo.cloud.exception.CommandExecutionException;
 import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -78,6 +79,7 @@ public class AreashopCloudCommands {
         ExceptionController<CommandSender> exceptionController = this.commandManager.exceptionController();
         // We need to unwrap ArgumentParseException because they wrap the custom exception messages
         exceptionController.registerHandler(ArgumentParseException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
+        exceptionController.registerHandler(CommandExecutionException.class, ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
         exceptionController.registerHandler(AreaShopCommandException.class,
                 new ArgumentParseExceptionHandler<>(this.messageBridge));
         var confirmationConfiguration = ConfirmationConfiguration.<CommandSender>builder()
