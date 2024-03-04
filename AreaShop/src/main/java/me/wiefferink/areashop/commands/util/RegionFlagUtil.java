@@ -79,24 +79,31 @@ public final class RegionFlagUtil {
     }
 
 
+    @Nonnull
     public static CommandFlag<BuyRegion> createDefaultBuy(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new BuyRegionParser<>(fileManager), BuyRegion.class))
                 .build();
     }
-    
+
+    @Nonnull
     public static CommandFlag<RentRegion> createDefaultRent(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(ParserDescriptor.of(new RentRegionParser<>(fileManager), RentRegion.class))
                 .build();
     }
-    
-    public static BuyRegion getOrParseBuyRegion(@Nonnull CommandContext<Player> context, CommandFlag<BuyRegion> flag) {
+
+    @Nonnull
+    public static BuyRegion getOrParseBuyRegion(@Nonnull CommandContext<CommandSender> context, CommandFlag<BuyRegion> flag) {
         BuyRegion buyRegion = context.flags().get(flag);
         if (buyRegion != null) {
             return buyRegion;
         }
-        List<BuyRegion> regions = Utils.getImportantBuyRegions(context.sender().getLocation());
+        CommandSender sender = context.sender();
+        if (!(sender instanceof Player player)) {
+            throw new AreaShopCommandException("cmd-automaticRegionOnlyByPlayer");
+        }
+        List<BuyRegion> regions = Utils.getImportantBuyRegions(player.getLocation());
         if (regions.isEmpty()) {
             throw new AreaShopCommandException("cmd-noRegionsAtLocation");
         } else if (regions.size() != 1) {
@@ -105,12 +112,17 @@ public final class RegionFlagUtil {
         return regions.get(0);
     }
 
-    public static RentRegion getOrParseRentRegion(@Nonnull CommandContext<Player> context, CommandFlag<RentRegion> flag) {
+    @Nonnull
+    public static RentRegion getOrParseRentRegion(@Nonnull CommandContext<CommandSender> context, CommandFlag<RentRegion> flag) {
         RentRegion rentRegion = context.flags().get(flag);
         if (rentRegion != null) {
             return rentRegion;
         }
-        List<RentRegion> regions = Utils.getImportantRentRegions(context.sender().getLocation());
+        CommandSender sender = context.sender();
+        if (!(sender instanceof Player player)) {
+            throw new AreaShopCommandException("cmd-automaticRegionOnlyByPlayer");
+        }
+        List<RentRegion> regions = Utils.getImportantRentRegions(player.getLocation());
         if (regions.isEmpty()) {
             throw new AreaShopCommandException("cmd-noRegionsAtLocation");
         } else if (regions.size() != 1) {

@@ -13,14 +13,31 @@ import javax.annotation.Nonnull;
 public class BuyRegionParser<C> implements ArgumentParser<C, BuyRegion> {
 
     private final IFileManager fileManager;
+    private final SuggestionProvider<C> suggestionProvider;
+
+    public BuyRegionParser(@Nonnull IFileManager fileManager, @Nonnull SuggestionProvider<C> suggestionProvider) {
+        this.fileManager = fileManager;
+        this.suggestionProvider = suggestionProvider;
+    }
 
     public BuyRegionParser(@Nonnull IFileManager fileManager) {
-        this.fileManager = fileManager;
+        this(fileManager, defaultSuggestionProvider(fileManager));
+    }
+
+    private static <C> SuggestionProvider<C> defaultSuggestionProvider(@Nonnull IFileManager fileManager) {
+        return SuggestionProvider.blockingStrings((ctx, input) -> {
+                    String text = input.peekString();
+                    return fileManager.getBuyNames()
+                            .stream()
+                            .filter(name -> name.startsWith(text))
+                            .toList();
+                }
+        );
     }
 
     @Override
     public @Nonnull ArgumentParseResult<BuyRegion> parse(@Nonnull CommandContext<C> commandContext,
-                                                                  @Nonnull CommandInput commandInput) {
+                                                         @Nonnull CommandInput commandInput) {
         String input = commandInput.peekString();
         BuyRegion region = this.fileManager.getBuy(input);
         if (region != null) {
@@ -33,13 +50,6 @@ public class BuyRegionParser<C> implements ArgumentParser<C, BuyRegion> {
 
     @Override
     public @Nonnull SuggestionProvider<C> suggestionProvider() {
-        return SuggestionProvider.blockingStrings((ctx, input) -> {
-                    String text = input.peekString();
-                    return this.fileManager.getBuyNames()
-                            .stream()
-                            .filter(name -> name.startsWith(text))
-                            .toList();
-                }
-        );
+        return this.suggestionProvider;
     }
 }
