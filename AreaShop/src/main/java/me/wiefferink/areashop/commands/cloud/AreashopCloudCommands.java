@@ -54,7 +54,8 @@ public class AreashopCloudCommands {
             SetOwnerCloudCommand.class,
             SetPriceCloudCommand.class,
             SetRestoreCloudCommand.class,
-            SetTeleportCloudCommand.class
+            SetTeleportCloudCommand.class,
+            SetTransferCloudCommand.class
     );
 
     private final MessageBridge messageBridge;
