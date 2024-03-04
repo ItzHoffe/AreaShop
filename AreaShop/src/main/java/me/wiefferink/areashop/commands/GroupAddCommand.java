@@ -39,7 +39,7 @@ public class GroupAddCommand extends AreashopCommandBean {
     private final CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
-    public GroupAddCloudCommand(
+    public GroupAddCommand(
             @Nonnull MessageBridge messageBridge,
             @Nonnull IFileManager fileManager,
             @Nonnull RegionFactory regionFactory

@@ -29,7 +29,7 @@ public class LinkSignsCommand extends AreashopCommandBean {
     private final CommandFlag<String> profileFlag;
 
     @Inject
-    public LinkSignsCloudCommand(
+    public LinkSignsCommand(
             @Nonnull MessageBridge messageBridge,
             @Nonnull SignLinkerManager signLinkerManager,
             @Nonnull AreaShop plugin

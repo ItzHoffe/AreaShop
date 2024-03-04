@@ -39,7 +39,7 @@ public class GroupDelCommand extends AreashopCommandBean {
     private final CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
-    public GroupDelCloudCommand(
+    public GroupDelCommand(
             @Nonnull MessageBridge messageBridge,
             @Nonnull IFileManager fileManager,
             @Nonnull RegionFactory regionFactory

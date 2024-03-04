@@ -10,10 +10,16 @@ import me.wiefferink.areashop.commands.AddFriendCommand;
 import me.wiefferink.areashop.commands.AddSignCommand;
 import me.wiefferink.areashop.commands.BuyCommand;
 import me.wiefferink.areashop.commands.DelCommand;
+import me.wiefferink.areashop.commands.DelFriendCommand;
+import me.wiefferink.areashop.commands.DelSignCommand;
 import me.wiefferink.areashop.commands.FindCommand;
+import me.wiefferink.areashop.commands.GroupAddCommand;
+import me.wiefferink.areashop.commands.GroupDelCommand;
+import me.wiefferink.areashop.commands.GroupInfoCommand;
+import me.wiefferink.areashop.commands.GroupListCommand;
 import me.wiefferink.areashop.commands.HelpCommand;
 import me.wiefferink.areashop.commands.InfoCommand;
-import me.wiefferink.areashop.commands.LinkSignsCloudCommand;
+import me.wiefferink.areashop.commands.LinkSignsCommand;
 import me.wiefferink.areashop.commands.MeCommand;
 import me.wiefferink.areashop.commands.MessageCommand;
 import me.wiefferink.areashop.commands.ReloadCommand;
@@ -61,16 +67,16 @@ public class AreashopCommands {
             AddSignCommand.class,
             BuyCommand.class,
             DelCommand.class,
-            DelFriendCloudCommand.class,
-            DelSignCloudCommand.class,
+            DelFriendCommand.class,
+            DelSignCommand.class,
             FindCommand.class,
-            GroupAddCloudCommand.class,
-            GroupDelCloudCommand.class,
-            GroupInfoCloudCommand.class,
-            GroupListCloudCommand.class,
+            GroupAddCommand.class,
+            GroupDelCommand.class,
+            GroupInfoCommand.class,
+            GroupListCommand.class,
             HelpCommand.class,
             InfoCommand.class,
-            LinkSignsCloudCommand.class,
+            LinkSignsCommand.class,
             MeCommand.class,
             MessageCommand.class,
             ReloadCommand.class,

@@ -37,7 +37,7 @@ public class DelFriendCommand extends AreashopCommandBean {
     private final CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
-    public DelFriendCloudCommand(
+    public DelFriendCommand(
             @Nonnull MessageBridge messageBridge,
             @Nonnull IFileManager fileManager
     ) {

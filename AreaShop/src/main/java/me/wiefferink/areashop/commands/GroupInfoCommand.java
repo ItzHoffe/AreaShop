@@ -28,7 +28,7 @@ public class GroupInfoCommand extends AreashopCommandBean {
     private final MessageBridge messageBridge;
 
     @Inject
-    public GroupInfoCloudCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
+    public GroupInfoCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
     }

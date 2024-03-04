@@ -22,7 +22,7 @@ public class GroupListCommand extends AreashopCommandBean {
 	private final IFileManager fileManager;
 
 	@Inject
-	public GroupListCloudCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
+	public GroupListCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
 		this.messageBridge = messageBridge;
 		this.fileManager = fileManager;
 	}

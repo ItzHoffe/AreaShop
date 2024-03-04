@@ -26,7 +26,7 @@ public class DelSignCommand extends AreashopCommandBean {
 	private final SignManager signManager;
 	private final MessageBridge messageBridge;
 	@Inject
-	public DelSignCloudCommand(@Nonnull MessageBridge messageBridge, @Nonnull SignManager signManager) {
+	public DelSignCommand(@Nonnull MessageBridge messageBridge, @Nonnull SignManager signManager) {
 		this.signManager = signManager;
 		this.messageBridge = messageBridge;
 	}
