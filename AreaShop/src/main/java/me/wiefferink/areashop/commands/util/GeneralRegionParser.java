@@ -6,6 +6,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import javax.annotation.Nonnull;
@@ -16,6 +17,10 @@ public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion> 
 
     public GeneralRegionParser(@Nonnull IFileManager fileManager) {
         this.fileManager = fileManager;
+    }
+
+    public static <C> ParserDescriptor<C, GeneralRegion> generalRegionParser(@Nonnull IFileManager fileManager) {
+        return ParserDescriptor.of(new GeneralRegionParser<>(fileManager), GeneralRegion.class);
     }
 
     @Override
