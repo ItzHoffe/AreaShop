@@ -35,7 +35,8 @@ public class SetTransferCloudCommand extends CloudCommandBean {
         this.regionFlag = RegionFlagUtil.createDefault(fileManager);
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.settransfer")) {
             return "help-settransfer";
         }

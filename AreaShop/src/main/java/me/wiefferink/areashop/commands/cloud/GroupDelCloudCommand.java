@@ -56,6 +56,14 @@ public class GroupDelCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.groupdel")) {
+            return "help-groupdel";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("groupdel")
                 .required(KEY_GROUP, StringParser.stringParser(), this::suggestGroupNames)

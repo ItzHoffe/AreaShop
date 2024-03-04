@@ -43,7 +43,8 @@ public class StopResellCloudCommand extends CloudCommandBean {
                 .build();
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.stopresellall") || target.hasPermission("areashop.stopresell")) {
             return "help-stopResell";
         }

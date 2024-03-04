@@ -31,6 +31,14 @@ public class RentCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.rent")) {
+            return "help-rent";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("rent");
     }

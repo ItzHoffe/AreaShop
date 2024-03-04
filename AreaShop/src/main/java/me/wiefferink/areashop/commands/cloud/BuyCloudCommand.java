@@ -26,6 +26,14 @@ public class BuyCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.buy")) {
+            return "help-buy";
+        }
+        return null;
+    }
+
+    @Override
     public String stringDescription() {
         return "Allows you to buy a region";
     }

@@ -41,7 +41,8 @@ public class SetOwnerCloudCommand extends CloudCommandBean {
         this.regionFlag = RegionFlagUtil.createDefault(fileManager);
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.setownerrent") || target.hasPermission("areashop.setownerbuy")) {
             return "help-setowner";
         }

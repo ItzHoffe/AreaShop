@@ -43,7 +43,8 @@ public class SetDurationCloudCommand extends CloudCommandBean {
         this.regionFlag = RegionFlagUtil.createDefaultRent(fileManager);
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.setduration")) {
             return "help-setduration";
         }

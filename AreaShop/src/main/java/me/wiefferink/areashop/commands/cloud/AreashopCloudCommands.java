@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.ArgumentParseExceptionHandler;
+import me.wiefferink.areashop.commands.util.HelpRenderer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.incendo.cloud.SenderMapper;
@@ -22,6 +23,7 @@ import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
 import org.incendo.cloud.processors.confirmation.ConfirmationManager;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
@@ -40,6 +42,7 @@ public class AreashopCloudCommands {
             GroupDelCloudCommand.class,
             GroupInfoCloudCommand.class,
             GroupListCloudCommand.class,
+            HelpCloudCommand.class,
             InfoCloudCommand.class,
             LinkSignsCloudCommand.class,
             MeCloudCommand.class,
@@ -69,6 +72,9 @@ public class AreashopCloudCommands {
     private final Injector injector;
     private final PaperCommandManager<CommandSender> commandManager;
 
+    private final List<CloudCommandBean> commands = new ArrayList<>();
+    private HelpRenderer helpRenderer;
+
     @Inject
     AreashopCloudCommands(@Nonnull Injector injector, @Nonnull Plugin plugin, @Nonnull MessageBridge messageBridge) {
         this.injector = injector;
@@ -81,13 +87,16 @@ public class AreashopCloudCommands {
     }
 
     public void registerCommands() {
+        this.commands.clear();
         initCommandManager();
         var builder = commandManager.commandBuilder("areashop", "as");
         for (Class<? extends CloudCommandBean> commandClass : COMMAND_CLASSES) {
             CloudCommandBean commandBean = injector.getInstance(commandClass);
+            this.commands.add(commandBean);
             var configuredBuilder = commandBean.configureCommand(builder);
             this.commandManager.command(configuredBuilder);
         }
+        this.helpRenderer = new HelpRenderer(this.messageBridge, this.commands);
     }
 
     private void initCommandManager() {
@@ -113,5 +122,11 @@ public class AreashopCloudCommands {
         commandManager.registerCommandPostProcessor(confirmationManager.createPostprocessor());
     }
 
+    public void showHelp(@Nonnull CommandSender sender) {
+        if (this.helpRenderer == null) {
+            throw new IllegalStateException("Command handler not yet initialized!");
+        }
+        this.helpRenderer.showHelp(sender);
+    }
 
 }

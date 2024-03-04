@@ -63,6 +63,14 @@ public class FindCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.find")) {
+            return "help-find";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("find")
                 .senderType(Player.class)

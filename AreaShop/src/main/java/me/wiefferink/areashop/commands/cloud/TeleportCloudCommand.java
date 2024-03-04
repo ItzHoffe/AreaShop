@@ -46,7 +46,8 @@ public class TeleportCloudCommand extends CloudCommandBean {
                 "areashop.teleportfriend");
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.teleportall") || target.hasPermission("areashop.teleport")) {
             return "help-teleport";
         }

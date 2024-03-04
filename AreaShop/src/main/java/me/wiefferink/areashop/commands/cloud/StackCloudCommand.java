@@ -94,7 +94,8 @@ public class StackCloudCommand extends CloudCommandBean {
         return shift;
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.stack")) {
             return "help-stack";
         }

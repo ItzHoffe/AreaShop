@@ -54,7 +54,8 @@ public class MeCloudCommand extends CloudCommandBean {
         return CommandProperties.of("me");
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.me")) {
             return "help-me";
         }

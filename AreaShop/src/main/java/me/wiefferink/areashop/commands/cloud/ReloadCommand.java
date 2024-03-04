@@ -40,7 +40,8 @@ public class ReloadCommand extends CloudCommandBean {
     }
 
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.reload")) {
             return "help-reload";
         }

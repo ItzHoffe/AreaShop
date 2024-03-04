@@ -89,6 +89,14 @@ public class InfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.info")) {
+            return "help-info";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("info")
                 .required(KEY_TYPE, EnumParser.enumParser(RegionStateFilterType.class))

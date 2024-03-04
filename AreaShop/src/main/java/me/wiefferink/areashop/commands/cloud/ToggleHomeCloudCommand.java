@@ -43,7 +43,8 @@ public final class ToggleHomeCloudCommand extends CloudCommandBean {
     }
 
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (!target.hasPermission("sethomecontrol.control")) {
             return null;
         }

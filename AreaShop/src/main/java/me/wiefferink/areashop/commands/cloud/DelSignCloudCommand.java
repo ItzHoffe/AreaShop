@@ -48,6 +48,14 @@ public class DelSignCloudCommand extends CloudCommandBean {
 				.handler(this::handleCommand);
 	}
 
+	@Override
+	public String getHelpKey(CommandSender target) {
+		if(target.hasPermission("areashop.delsign")) {
+			return "help-delsign";
+		}
+		return null;
+	}
+
 	private void handleCommand(@Nonnull CommandContext<Player> context) {
 		Player sender = context.sender();
 		if (!sender.hasPermission("areashop.delsign")) {

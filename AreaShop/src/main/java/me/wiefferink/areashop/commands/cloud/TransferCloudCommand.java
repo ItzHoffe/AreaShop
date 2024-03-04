@@ -50,7 +50,8 @@ public class TransferCloudCommand extends CloudCommandBean {
                 .build();
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (!target.hasPermission("areashop.transfer")) {
             return null;
         }

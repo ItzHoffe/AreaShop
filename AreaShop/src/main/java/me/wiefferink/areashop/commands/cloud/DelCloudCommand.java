@@ -55,6 +55,14 @@ public class DelCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.destroyrent") || target.hasPermission("areashop.destroybuy") || target.hasPermission("areashop.destroyrent.landlord") || target.hasPermission("areashop.destroybuy.landlord")) {
+            return "help-del";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull CommandProperties properties() {
         return CommandProperties.of("delete", "del");
     }

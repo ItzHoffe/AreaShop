@@ -32,6 +32,14 @@ public class GroupListCloudCommand extends CloudCommandBean {
 	}
 
 	@Override
+	public String getHelpKey(CommandSender target) {
+		if(target.hasPermission("areashop.grouplist")) {
+			return "help-grouplist";
+		}
+		return null;
+	}
+
+	@Override
 	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("grouplist", "groups")
 				.handler(this::handleCommand);

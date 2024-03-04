@@ -44,6 +44,7 @@ public class LinkSignsCloudCommand extends CloudCommandBean {
         return null;
     }
 
+
     @NotNull
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
@@ -55,10 +56,11 @@ public class LinkSignsCloudCommand extends CloudCommandBean {
 
     @Override
     protected @NonNull CommandProperties properties() {
-        return null;
+        return CommandProperties.of("linksign");
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.linksigns")) {
             return "help-linksigns";
         }

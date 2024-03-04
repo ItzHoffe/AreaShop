@@ -51,7 +51,8 @@ public class SetTeleportCloudCommand extends CloudCommandBean {
                 || region.isOwner(player) && player.hasPermission("areashop.setteleport");
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.setteleportall") || target.hasPermission("areashop.setteleport")) {
             return "help-setteleport";
         }

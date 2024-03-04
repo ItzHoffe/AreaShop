@@ -32,7 +32,7 @@ public class MessageCloudCommand extends CloudCommandBean {
 		this.messageBridge = messageBridge;
 	}
 
-	public String getHelp(CommandSender target) {
+	public String getHelpKey(CommandSender target) {
 		// Internal command, no need to show in the help list
 		return null;
 	}

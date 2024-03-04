@@ -35,7 +35,8 @@ public class SetPriceCloudCommand extends CloudCommandBean {
         this.regionFlag = RegionFlagUtil.createDefault(fileManager);
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.setprice")) {
             return "help-setprice";
         }

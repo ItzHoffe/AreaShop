@@ -65,7 +65,8 @@ public class ResellCloudCommand extends CloudCommandBean {
     }
 
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.resellall") || target.hasPermission("areashop.resell")) {
             return "help-resell";
         }

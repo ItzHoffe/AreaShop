@@ -56,7 +56,8 @@ public class UnrentCloudCommand extends CloudCommandBean {
         return false;
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.unrent") || target.hasPermission("areashop.unrentown")) {
             return "help-unrent";
         }

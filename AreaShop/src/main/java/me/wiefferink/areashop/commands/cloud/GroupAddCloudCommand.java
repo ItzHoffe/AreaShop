@@ -56,6 +56,14 @@ public class GroupAddCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.groupadd")) {
+            return "help-groupadd";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("groupadd")
                 .required(KEY_GROUP, StringParser.stringParser(), this::suggestGroupNames)

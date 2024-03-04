@@ -38,6 +38,14 @@ public class GroupInfoCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.groupinfo")) {
+            return "help-groupinfo";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         ParserDescriptor<CommandSender, RegionGroup> regionGroupParser = ParserDescriptor.of(
                 new RegionGroupParser<>(this.fileManager, "groupinfo-noGroup"),

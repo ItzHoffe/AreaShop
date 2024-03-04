@@ -1,5 +1,6 @@
 package me.wiefferink.areashop.commands.cloud;
 
+import me.wiefferink.areashop.commands.util.HelpProvider;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandBean;
@@ -12,7 +13,7 @@ import javax.annotation.Nonnull;
  * An extension of {@link CommandBean} which does extra pre-processing of the commands.
  * Adapted from <a href="https://github.com/Incendo/kitchensink">KitchenSink</a>
  */
-public abstract class CloudCommandBean extends CommandBean<CommandSender> {
+public abstract class CloudCommandBean extends CommandBean<CommandSender> implements HelpProvider {
 
     private boolean requireConfirmation;
 

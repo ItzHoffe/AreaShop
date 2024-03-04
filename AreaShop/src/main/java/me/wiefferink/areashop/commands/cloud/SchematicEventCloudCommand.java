@@ -52,7 +52,8 @@ public class SchematicEventCloudCommand extends CloudCommandBean {
         return CommandProperties.of("schemevent");
     }
 
-    public String getHelp(CommandSender target) {
+    @Override
+    public String getHelpKey(CommandSender target) {
         if (target.hasPermission("areashop.schematicevents")) {
             return "help-schemevent";
         }

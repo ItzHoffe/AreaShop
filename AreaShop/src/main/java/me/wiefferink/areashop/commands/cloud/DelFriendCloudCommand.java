@@ -62,6 +62,14 @@ public class DelFriendCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if (target.hasPermission("areashop.delfriendall") || target.hasPermission("areashop.delfriend")) {
+            return "help-delFriend";
+        }
+        return null;
+    }
+
+    @Override
     public String stringDescription() {
         return null;
     }

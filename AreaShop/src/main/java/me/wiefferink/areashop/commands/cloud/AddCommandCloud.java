@@ -35,6 +35,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -73,6 +74,20 @@ public class AddCommandCloud extends CloudCommandBean {
         this.worldEditInterface = worldEditInterface;
         this.worldGuardInterface = worldGuardInterface;
         this.regionFactory = regionFactory;
+    }
+
+    @Override
+    public String getHelpKey(@NotNull CommandSender target) {
+        if(target.hasPermission("areashop.createrent")
+                || target.hasPermission("areashop.createrent.member")
+                || target.hasPermission("areashop.createrent.owner")
+
+                || target.hasPermission("areashop.createbuy")
+                || target.hasPermission("areashop.createbuy.member")
+                || target.hasPermission("areashop.createbuy.owner")) {
+            return "help-add";
+        }
+        return null;
     }
 
     @Override

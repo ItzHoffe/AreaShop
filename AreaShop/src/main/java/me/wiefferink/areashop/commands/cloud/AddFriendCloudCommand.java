@@ -53,6 +53,14 @@ public class AddFriendCloudCommand extends CloudCommandBean {
     }
 
     @Override
+    public String getHelpKey(CommandSender target) {
+        if (target.hasPermission("areashop.addfriendall") || target.hasPermission("areashop.addfriend")) {
+            return "help-addFriend";
+        }
+        return null;
+    }
+
+    @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("addfriend")
                 .senderType(Player.class)

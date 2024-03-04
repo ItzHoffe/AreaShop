@@ -54,6 +54,14 @@ public class AddSignCloudCommand extends CloudCommandBean {
 	}
 
 	@Override
+	public String getHelpKey(CommandSender target) {
+		if(target.hasPermission("areashop.addsign")) {
+			return "help-addsign";
+		}
+		return null;
+	}
+
+	@Override
 	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("addsign")
 				.senderType(Player.class)
