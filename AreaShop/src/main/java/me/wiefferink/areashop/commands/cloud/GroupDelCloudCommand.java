@@ -58,7 +58,6 @@ public class GroupDelCloudCommand extends CloudCommandBean {
     @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("groupdel")
-                .permission("areashop.groupdel")
                 .required(KEY_GROUP, StringParser.stringParser(), this::suggestGroupNames)
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);
@@ -71,6 +70,9 @@ public class GroupDelCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
+        if (!sender.hasPermission("groupdel")) {
+            throw new AreaShopCommandException("groupdel-noPermission");
+        }
         String rawGroup = context.get(KEY_GROUP);
         RegionGroup group = fileManager.getGroup(rawGroup);
         if (group == null) {

@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionInfoUtil;
 import me.wiefferink.areashop.commands.util.ValidatedOfflinePlayerParser;
 import me.wiefferink.areashop.managers.IFileManager;
@@ -43,7 +44,6 @@ public class MeCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("me")
-                .permission("areashop.me")
                 .senderType(Player.class)
                 .optional(KEY_PLAYER, ValidatedOfflinePlayerParser.validatedOfflinePlayerParser())
                 .handler(this::handleCommand);
@@ -63,6 +63,9 @@ public class MeCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
         Player sender = context.sender();
+        if (!sender.hasPermission("areashop.me")) {
+            throw new AreaShopCommandException("me-noPermission");
+        }
         OfflinePlayer player = context.getOrDefault(KEY_PLAYER, sender);
         RegionInfoUtil.showRegionInfo(this.messageBridge, this.fileManager, sender, player);
     }

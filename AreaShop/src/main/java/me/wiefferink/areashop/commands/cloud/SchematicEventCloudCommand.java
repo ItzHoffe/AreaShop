@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.GeneralRegionParser;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -41,7 +42,6 @@ public class SchematicEventCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("schemevent")
-                .permission("areashop.schematicevents")
                 .required(KEY_REGION, GeneralRegionParser.generalRegionParser(this.fileManager))
                 .required(KEY_EVENT_TYPE, EnumParser.enumParser(GeneralRegion.RegionEvent.class))
                 .handler(this::handleCommand);
@@ -62,19 +62,17 @@ public class SchematicEventCloudCommand extends CloudCommandBean {
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.schematicevents")) {
-            messageBridge.message(sender, "schemevent-noPermission");
-            return;
+            throw new AreaShopCommandException("schemevent-noPermission");
         }
 
         GeneralRegion region = context.get(KEY_REGION);
         GeneralRegion.RegionEvent event = context.get(KEY_EVENT_TYPE);
         if (region.getRegion() == null) {
-            messageBridge.message(sender, "general-noRegion", region);
-            return;
+            throw new AreaShopCommandException("general-noRegion", region);
         }
         region.handleSchematicEvent(event);
         region.update();
-        messageBridge.message(sender, "schemevent-success", event.getValue(), region);
+        this.messageBridge.message(sender, "schemevent-success", event.getValue(), region);
     }
 
 }

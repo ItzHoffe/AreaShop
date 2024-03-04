@@ -44,13 +44,15 @@ public class DelSignCloudCommand extends CloudCommandBean {
 	@Override
 	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("deletesign", "delsign")
-				.permission("delsign-noPermission")
 				.senderType(Player.class)
 				.handler(this::handleCommand);
 	}
 
 	private void handleCommand(@Nonnull CommandContext<Player> context) {
 		Player sender = context.sender();
+		if (!sender.hasPermission("areashop.delsign")) {
+			throw new AreaShopCommandException("delsign-noPermission");
+		}
 		// Get the sign
 		Block block = null;
 		BlockIterator blockIterator = new BlockIterator(sender, 100);

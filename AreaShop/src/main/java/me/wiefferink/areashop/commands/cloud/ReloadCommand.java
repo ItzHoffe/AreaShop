@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.AreaShop;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
@@ -30,7 +31,6 @@ public class ReloadCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("reload")
-                .permission("areashop.reload")
                 .handler(this::handleCommand);
     }
 
@@ -48,6 +48,9 @@ public class ReloadCommand extends CloudCommandBean {
     }
 
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
+        if (!context.hasPermission("areashop.reload")) {
+            throw new AreaShopCommandException("reload-noPermission");
+        }
         this.plugin.reload(context.sender());
     }
 }

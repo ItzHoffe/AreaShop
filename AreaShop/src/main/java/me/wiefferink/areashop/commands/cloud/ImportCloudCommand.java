@@ -45,7 +45,6 @@ public class ImportCloudCommand extends CloudCommandBean {
         withConfirmation();
         var sourceParser = AcceptedValuesParser.ofConstant(List.of("RegionForSale"), "import-wrongSource", true);
         return builder.literal("import")
-                .permission("areashop.import")
                 .required(KEY_SOURCE, ParserDescriptor.of(sourceParser, String.class))
                 .handler(this::handleCommand);
     }
@@ -64,7 +63,7 @@ public class ImportCloudCommand extends CloudCommandBean {
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.import")) {
-            messageBridge.message(sender, "import-noPermission");
+            this.messageBridge.message(sender, "import-noPermission");
             return;
         }
         String importSource = context.get(KEY_SOURCE);

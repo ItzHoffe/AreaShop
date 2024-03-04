@@ -66,7 +66,6 @@ public class TransferCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("transfer")
-                .permission("areashop.transfer")
                 .senderType(Player.class)
                 .handler(this::handleCommand);
     }
@@ -78,6 +77,9 @@ public class TransferCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
         Player sender = context.sender();
+        if (!sender.hasPermission("areashop.transfer")) {
+            throw new AreaShopCommandException("transfer-noPermission");
+        }
         GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
         if (!region.isTransferEnabled()) {
             throw new AreaShopCommandException("transfer-disabled");

@@ -2,6 +2,7 @@ package me.wiefferink.areashop.commands.cloud;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.RentRegion;
@@ -39,13 +40,15 @@ public class RentCloudCommand extends CloudCommandBean {
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder
                 .literal("rent")
-                .permission("areashop.rent")
                 .flag(this.rentRegionFlag)
                 .senderType(Player.class)
                 .handler(this::handleCommand);
     }
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
+        if (!context.hasPermission("areashop.rent")) {
+            throw new AreaShopCommandException("rent-noPermission");
+        }
         RentRegion region = RegionFlagUtil.getOrParseRentRegion(context, this.rentRegionFlag);
         region.rent(context.sender());
     }

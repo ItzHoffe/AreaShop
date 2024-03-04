@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.commands.util.ValidatedOfflinePlayerParser;
 import me.wiefferink.areashop.managers.IFileManager;
@@ -53,7 +54,6 @@ public class SetLandlordCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("setlandlord")
-                .permission("areashop.setlandlord")
                 .required(KEY_PLAYER, ValidatedOfflinePlayerParser.validatedOfflinePlayerParser())
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);
@@ -67,8 +67,7 @@ public class SetLandlordCloudCommand extends CloudCommandBean {
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
         if (!sender.hasPermission("areashop.setlandlord")) {
-            this.messageBridge.message(sender, "setlandlord-noPermission");
-            return;
+            throw new AreaShopCommandException("setlandlord-noPermission");
         }
         GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
         OfflinePlayer player = context.get(KEY_PLAYER);

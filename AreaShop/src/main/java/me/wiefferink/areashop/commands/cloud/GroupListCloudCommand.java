@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,6 @@ public class GroupListCloudCommand extends CloudCommandBean {
 	@Override
 	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("grouplist", "groups")
-				.permission("areashop.grouplist")
 				.handler(this::handleCommand);
 	}
 
@@ -43,6 +43,9 @@ public class GroupListCloudCommand extends CloudCommandBean {
 	}
 
 	private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
+		if (!context.hasPermission("areashop.grouplist")) {
+			throw new AreaShopCommandException("grouplist-noPermission");
+		}
 		List<String> groups = this.fileManager.getGroupNames();
 		CommandSender sender = context.sender();
 		if(groups.isEmpty()) {

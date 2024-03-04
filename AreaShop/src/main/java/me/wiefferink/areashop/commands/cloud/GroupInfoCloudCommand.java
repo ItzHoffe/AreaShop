@@ -44,7 +44,6 @@ public class GroupInfoCloudCommand extends CloudCommandBean {
                 RegionGroup.class);
         return builder
                 .literal("groupinfo")
-                .permission("areashop.groupinfo")
                 .required(KEY_GROUP, regionGroupParser)
                 .handler(this::handleCommand);
 
@@ -56,6 +55,9 @@ public class GroupInfoCloudCommand extends CloudCommandBean {
     }
 
     public void handleCommand(@Nonnull CommandContext<CommandSender> context) {
+        if (!context.hasPermission("groupinfo")) {
+            throw new AreaShopCommandException("groupinfo-noPermission");
+        }
         RegionGroup group = context.get(KEY_GROUP);
         Set<String> members = group.getMembers();
         if (members.isEmpty()) {

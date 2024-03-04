@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -50,7 +51,6 @@ public class SetTransferCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("settransfer")
-                .permission("areashop.settransfer")
                 .required(KEY_ENABLED, BooleanParser.booleanParser(true))
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);
@@ -63,6 +63,9 @@ public class SetTransferCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
+        if (!sender.hasPermission("areashop.settransfer")) {
+            throw new AreaShopCommandException("settransfer-noPermission");
+        }
         GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
         boolean enabled = context.get(KEY_ENABLED);
         region.setTransferEnabled(enabled);

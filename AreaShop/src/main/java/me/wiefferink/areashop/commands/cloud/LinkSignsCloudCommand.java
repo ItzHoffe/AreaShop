@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.SignProfileUtil;
 import me.wiefferink.areashop.managers.SignLinkerManager;
 import org.bukkit.command.CommandSender;
@@ -47,7 +48,6 @@ public class LinkSignsCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("linksign")
-                .permission("areashop.linksigns")
                 .senderType(Player.class)
                 .flag(this.profileFlag)
                 .handler(this::handleCommand);
@@ -67,6 +67,9 @@ public class LinkSignsCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
         Player player = context.sender();
+        if (!player.hasPermission("linksigns")) {
+            throw new AreaShopCommandException("linksigns-noPermission");
+        }
         if (signLinkerManager.isInSignLinkMode(player)) {
             signLinkerManager.exitSignLinkMode(player);
             return;

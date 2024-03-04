@@ -113,7 +113,7 @@ public final class RegionFlagUtil {
     }
 
     @Nonnull
-    public static RentRegion getOrParseRentRegion(@Nonnull CommandContext<CommandSender> context, CommandFlag<RentRegion> flag) {
+    public static RentRegion getOrParseRentRegion(@Nonnull CommandContext<? extends CommandSender> context, CommandFlag<RentRegion> flag) {
         RentRegion rentRegion = context.flags().get(flag);
         if (rentRegion != null) {
             return rentRegion;

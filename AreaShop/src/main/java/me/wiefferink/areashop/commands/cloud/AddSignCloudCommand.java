@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.commands.util.SignProfileUtil;
 import me.wiefferink.areashop.features.signs.RegionSign;
@@ -56,7 +57,6 @@ public class AddSignCloudCommand extends CloudCommandBean {
 	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
 		return builder.literal("addsign")
 				.senderType(Player.class)
-				.permission("areashop.addsign")
 				.flag(this.regionFlag)
 				.flag(SignProfileUtil.DEFAULT_FLAG)
 				.handler(this::handleCommand);
@@ -64,6 +64,9 @@ public class AddSignCloudCommand extends CloudCommandBean {
 
 	private void handleCommand(@Nonnull CommandContext<Player> context) {
 		Player sender = context.sender();
+		if (!sender.hasPermission("areashop.addsign")) {
+			throw new AreaShopCommandException("addsign-noPermission");
+		}
 		// Get the sign
 		Block block = null;
 		BlockIterator blockIterator = new BlockIterator(sender, 100);

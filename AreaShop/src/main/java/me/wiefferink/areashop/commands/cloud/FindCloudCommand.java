@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionGroupParser;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
@@ -64,7 +65,6 @@ public class FindCloudCommand extends CloudCommandBean {
     @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("find")
-                .permission("areashop.find")
                 .senderType(Player.class)
                 .required(KEY_REGION_TYPE, EnumParser.enumParser(GeneralRegion.RegionType.class))
                 .optional(KEY_PRICE, DoubleParser.doubleParser(0))
@@ -79,6 +79,9 @@ public class FindCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
         Player sender = context.sender();
+        if (!sender.hasPermission("areashop.find")) {
+            throw new AreaShopCommandException("find-noPermission");
+        }
         double balance;
         if (economy != null) {
             balance = economy.getBalance(sender);

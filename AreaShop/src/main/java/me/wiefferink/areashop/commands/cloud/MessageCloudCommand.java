@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.tools.SimpleMessageBridge;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.command.CommandSender;
@@ -45,7 +46,6 @@ public class MessageCloudCommand extends CloudCommandBean {
 	@Override
 	protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
 		return builder.literal("message")
-				.permission("areashop.message")
 				.required(KEY_PLAYER, PlayerParser.playerParser())
 				.required(KEY_MESSAGE, StringParser.greedyStringParser())
 				.handler(this::handleCommand);
@@ -59,8 +59,7 @@ public class MessageCloudCommand extends CloudCommandBean {
 	private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
 		CommandSender sender = context.sender();
 		if(!sender.hasPermission("areashop.message")) {
-			this.messageBridge.message(sender, "message-noPermission");
-			return;
+			throw new AreaShopCommandException("message-noPermission");
 		}
 		Player player = context.get(KEY_PLAYER);
 		String message = context.get(KEY_MESSAGE);

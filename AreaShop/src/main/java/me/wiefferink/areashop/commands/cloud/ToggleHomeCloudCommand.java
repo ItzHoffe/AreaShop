@@ -59,7 +59,6 @@ public final class ToggleHomeCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("togglehome")
-                .permission("areashop.togglehome")
                 .required(KEY_ACCESS_TYPE, EnumParser.enumParser(HomeAccessType.class))
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);

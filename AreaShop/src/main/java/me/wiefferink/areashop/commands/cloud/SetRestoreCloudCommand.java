@@ -3,6 +3,7 @@ package me.wiefferink.areashop.commands.cloud;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.GeneralRegionParser;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -57,7 +58,6 @@ public class SetRestoreCloudCommand extends CloudCommandBean {
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("setrestore")
-                .permission("areashop.setrestore")
                 .required(KEY_REGION, GeneralRegionParser.generalRegionParser(this.fileManager))
                 .required(KEY_RESTORE, StringParser.stringParser(), this::suggestRestoreType)
                 .optional(KEY_PROFILE, StringParser.stringParser(), this::suggestSchematicProfiles)
@@ -71,6 +71,9 @@ public class SetRestoreCloudCommand extends CloudCommandBean {
 
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
+        if (!sender.hasPermission("areashop.setrestore")) {
+            throw new AreaShopCommandException("setrestore-noPermission");
+        }
         GeneralRegion region = context.get(KEY_REGION);
         String restoreType = context.get(KEY_RESTORE);
         Optional<String> optionalProfile = context.optional(KEY_PROFILE);

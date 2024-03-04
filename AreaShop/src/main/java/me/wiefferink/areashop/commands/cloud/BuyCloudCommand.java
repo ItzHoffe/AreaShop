@@ -2,6 +2,7 @@ package me.wiefferink.areashop.commands.cloud;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
@@ -39,13 +40,15 @@ public class BuyCloudCommand extends CloudCommandBean {
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder
                 .literal("buy")
-                .permission("areashop.buy")
                 .flag(this.buyRegionFlag)
                 .senderType(Player.class)
                 .handler(this::handleCommand);
     }
 
     private void handleCommand(@Nonnull CommandContext<Player> context) {
+        if (!context.hasPermission("areashop.buy")) {
+            throw new AreaShopCommandException("buy-noPermission");
+        }
         BuyRegion region = RegionFlagUtil.getOrParseBuyRegion(context, this.buyRegionFlag);
         region.buy(context.sender());
     }
