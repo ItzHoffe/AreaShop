@@ -3,45 +3,56 @@ package me.wiefferink.areashop.commands;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
+import me.wiefferink.areashop.commands.util.AreashopCommandBean;
+import me.wiefferink.areashop.commands.util.GeneralRegionParser;
+import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
-import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandProperties;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.parser.ParserDescriptor;
+import org.incendo.cloud.parser.flag.CommandFlag;
+import org.incendo.cloud.suggestion.Suggestion;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Singleton
-public class TransferCommand extends CommandAreaShop {
+public class TransferCommand extends AreashopCommandBean {
 
+    private static final CloudKey<OfflinePlayer> KEY_PLAYER = CloudKey.of("player", OfflinePlayer.class);
+    private final MessageBridge messageBridge;
     private final IFileManager fileManager;
-    private final Server server;
+    private final CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public TransferCommand(
             @Nonnull MessageBridge messageBridge,
-            @Nonnull IFileManager fileManager,
-            @Nonnull Server server
+            @Nonnull IFileManager fileManager
     ) {
-        super(messageBridge);
+        ParserDescriptor<Player, GeneralRegion> regionParser =
+                ParserDescriptor.of(new GeneralRegionParser<>(fileManager, this::suggestRegions), GeneralRegion.class);
+        this.messageBridge = messageBridge;
         this.fileManager = fileManager;
-        this.server = server;
+        this.regionFlag = CommandFlag.builder("region")
+                .withComponent(regionParser)
+                .build();
     }
 
     @Override
-    public String getCommandStart() {
-        return "areashop transfer";
-    }
-
-    @Override
-    public String getHelp(CommandSender target) {
+    public String getHelpKey(CommandSender target) {
         if (!target.hasPermission("areashop.transfer")) {
             return null;
         }
@@ -49,108 +60,80 @@ public class TransferCommand extends CommandAreaShop {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("areashop.transfer")) {
-            this.messageBridge.message(sender, "transfer-noPermission");
-            return;
-        }
-        if (sender instanceof Player player) {
-            handlePlayer(player, args);
-        } else {
-            this.messageBridge.message(sender, "cmd-onlyByPlayer");
-        }
+    public String stringDescription() {
+        return null;
     }
 
-    private void handlePlayer(Player player, String[] args) {
-        if (args.length < 2) {
-            this.messageBridge.message(player, "transfer-help");
-            return;
+    @NotNull
+    @Override
+    protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
+        return builder.literal("transfer")
+                .senderType(Player.class)
+                .handler(this::handleCommand);
+    }
+
+    @Override
+    protected @NonNull CommandProperties properties() {
+        return CommandProperties.of("transfer");
+    }
+
+    private void handleCommand(@Nonnull CommandContext<Player> context) {
+        Player sender = context.sender();
+        if (!sender.hasPermission("areashop.transfer")) {
+            throw new AreaShopCommandException("transfer-noPermission");
         }
-        String targetPlayerName = args[1];
-        if (targetPlayerName.equals(player.getName())) {
-            this.messageBridge.message(player, "transfer-transferSelf");
-            return;
-        }
-        GeneralRegion region;
-        if (args.length > 2) {
-            String targetRegionName = args[2];
-            region = this.fileManager.getRegion(targetRegionName);
-            if (region == null) {
-                messageBridge.message(player, "cmd-noRegion");
-                return;
-            }
-        } else {
-            List<GeneralRegion> regions = Utils.getImportantRegions(player.getLocation());
-            if (regions.isEmpty()) {
-                messageBridge.message(player, "cmd-noRegionsAtLocation");
-                return;
-            } else if (regions.size() > 1) {
-                messageBridge.message(player, "cmd-moreRegionsAtLocation");
-                return;
-            }
-            region = regions.get(0);
-        }
+        GeneralRegion region = RegionFlagUtil.getOrParseRegion(context, this.regionFlag);
         if (!region.isTransferEnabled()) {
-            this.messageBridge.message(player, "transfer-disabled");
-            return;
+            throw new AreaShopCommandException("transfer-disabled");
         }
-        @SuppressWarnings("deprecation")
-        OfflinePlayer targetPlayer = this.server.getOfflinePlayer(targetPlayerName);
+        OfflinePlayer targetPlayer = context.get(KEY_PLAYER);
+        String targetPlayerName = targetPlayer.getName();
+        if (Objects.equals(sender, targetPlayer)) {
+            throw new AreaShopCommandException("transfer-transferSelf");
+        }
         if (!targetPlayer.hasPlayedBefore()) {
             // Unknown player
-            this.messageBridge.message(player, "transfer-noPlayer", targetPlayerName);
-            return;
+            throw new AreaShopCommandException("transfer-noPlayer", targetPlayerName);
         }
-        if (region.isLandlord(player.getUniqueId())) {
+        if (region.isLandlord(sender.getUniqueId())) {
             // Transfer ownership if same as landlord
             region.getFriendsFeature().deleteFriend(region.getOwner(), null);
             region.setOwner(targetPlayer.getUniqueId());
             region.setLandlord(targetPlayer.getUniqueId(), targetPlayerName);
-            this.messageBridge.message(player, "transfer-transferred-owner", targetPlayerName, region);
+            this.messageBridge.message(sender, "transfer-transferred-owner", targetPlayerName, region);
             this.messageBridge.messagePersistent(targetPlayer, "transfer-transferred-owner", targetPlayerName, region);
             region.update();
             region.saveRequired();
             return;
         }
-        if (!region.isOwner(player.getUniqueId())) {
+        if (!region.isOwner(sender.getUniqueId())) {
             // Cannot transfer tenant if we aren't the current tenant
-            this.messageBridge.message(player, "transfer-notCurrentTenant");
-            return;
+            throw new AreaShopCommandException("transfer-notCurrentTenant");
         }
         region.getFriendsFeature().deleteFriend(region.getOwner(), null);
         // Swap the owner/occupant (renter or buyer)
         region.setOwner(targetPlayer.getUniqueId());
 
-        this.messageBridge.message(player, "transfer-transferred-tenant", targetPlayerName, region);
-        if (targetPlayer.isOnline()) {
-            this.messageBridge.message(targetPlayer.getPlayer(), "transfer-transferred-tenant", targetPlayerName, region);
-        }
+        this.messageBridge.message(sender, "transfer-transferred-tenant", targetPlayerName, region);
+        this.messageBridge.messagePersistent(targetPlayer, "transfer-transferred-tenant", targetPlayerName, region);
         region.update();
         region.saveRequired();
     }
 
-    @Override
-    public List<String> getTabCompleteList(int toComplete, String[] start, CommandSender sender) {
-        if (toComplete == 2) {
-            Collection<? extends Player> players = this.server.getOnlinePlayers();
-            List<String> ret = new ArrayList<>(players.stream()
-                    .map(Player::getName)
-                    .toList());
-            if (sender instanceof Player player) {
-                ret.remove(player.getName());
-            }
-            return ret;
-        } else if (toComplete == 3) {
-            if (!(sender instanceof Player player)) {
-                return this.fileManager.getRegionNames();
-            }
-            UUID uuid = player.getUniqueId();
-            return new ArrayList<>(this.fileManager.getRegions()
-                    .stream()
-                    .filter(region -> region.isOwner(uuid) || region.isLandlord(uuid))
-                    .map(GeneralRegion::getName)
-                    .toList());
-        }
-        return Collections.emptyList();
+    private CompletableFuture<Iterable<Suggestion>> suggestRegions(
+            @Nonnull CommandContext<Player> context,
+            @Nonnull CommandInput input
+    ) {
+        String text = input.peekString();
+        UUID uuid = context.sender().getUniqueId();
+        List<Suggestion> suggestions = this.fileManager.getRegions()
+                .stream()
+                .filter(region -> region.isOwner(uuid) || region.isLandlord(uuid))
+                .map(GeneralRegion::getName)
+                .filter(name -> name.startsWith(text))
+                .map(Suggestion::simple)
+                .toList();
+        return CompletableFuture.completedFuture(suggestions);
     }
+
 }

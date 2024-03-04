@@ -9,14 +9,13 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import io.papermc.lib.PaperLib;
 import me.wiefferink.areashop.adapters.platform.MinecraftPlatform;
 import me.wiefferink.areashop.adapters.platform.paper.PaperPlatform;
-import me.wiefferink.areashop.commands.cloud.AreashopCloudCommands;
+import me.wiefferink.areashop.commands.util.AreashopCommands;
 import me.wiefferink.areashop.extensions.AreashopExtension;
 import me.wiefferink.areashop.features.signs.SignManager;
 import me.wiefferink.areashop.interfaces.AreaShopInterface;
 import me.wiefferink.areashop.interfaces.WorldEditInterface;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
 import me.wiefferink.areashop.listeners.PlayerLoginLogoutListener;
-import me.wiefferink.areashop.managers.CommandManager;
 import me.wiefferink.areashop.managers.FeatureManager;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.managers.FileManager;
@@ -84,7 +83,6 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 	private MessageBridge messageBridge;
 	private IFileManager fileManager = null;
 	private LanguageManager languageManager = null;
-	private CommandManager commandManager = null;
 	private SignLinkerManager signLinkerManager = null;
 	private FeatureManager featureManager = null;
 	private SignManager signManager;
@@ -309,7 +307,7 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 		setupTasks();
 
 		// Register commands
-		AreashopCloudCommands commands = injector.getInstance(AreashopCloudCommands.class);
+		AreashopCommands commands = injector.getInstance(AreashopCommands.class);
 		commands.registerCommands();
 
 		// Create a signLinkerManager
@@ -573,16 +571,6 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 	 */
 	public LanguageManager getLanguageManager() {
 		return languageManager;
-	}
-
-	/**
-	 * Function to get the CommandManager.
-	 * @return the CommandManager
-	 */
-	@Nonnull
-	@Override
-	public CommandManager getCommandManager() {
-		return commandManager;
 	}
 
 	/**

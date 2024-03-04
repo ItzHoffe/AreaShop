@@ -3,81 +3,84 @@ package me.wiefferink.areashop.commands;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AcceptedValuesParser;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
+import me.wiefferink.areashop.commands.util.AreashopCommandBean;
 import me.wiefferink.areashop.regions.ImportJobFactory;
-import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.command.CommandSender;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandProperties;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.parser.ParserDescriptor;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class ImportCommand extends CommandAreaShop {
+public class ImportCommand extends AreashopCommandBean {
 
-	/* RegionGroup priority usage:
-	   0: Settings from /config.yml
-	   1: Settings from /worlds/<world>/config.yml
-	   2: Settings from /worlds/<world>/parent-regions.yml (if their priority is set it is added to this value)
-	 */
-	private final ImportJobFactory importJobFactory;
+    private static final CloudKey<String> KEY_SOURCE = CloudKey.of("source", String.class);
 
-	@Inject
-	public ImportCommand(@Nonnull MessageBridge messageBridge, @Nonnull ImportJobFactory importJobFactory) {
-		super(messageBridge);
-		this.importJobFactory = importJobFactory;
-	}
+    /* RegionGroup priority usage:
+       0: Settings from /config.yml
+       1: Settings from /worlds/<world>/config.yml
+       2: Settings from /worlds/<world>/parent-regions.yml (if their priority is set it is added to this value)
+     */
+    private final ImportJobFactory importJobFactory;
+    private final MessageBridge messageBridge;
 
-	@Override
-	public String getCommandStart() {
-		return "areashop import";
-	}
+    @Inject
+    public ImportCommand(@Nonnull MessageBridge messageBridge, @Nonnull ImportJobFactory importJobFactory) {
+        this.messageBridge = messageBridge;
+        this.importJobFactory = importJobFactory;
+    }
 
-	@Override
-	public String getHelp(CommandSender target) {
-		if(target.hasPermission("areashop.import")) {
-			return "help-import";
-		}
-		return null;
-	}
+    @Override
+    public String stringDescription() {
+        return null;
+    }
 
-	// TODO:
-	//  - Landlord?
-	//  - Friends
-	//  - Region flags?
-	//  - Settings from the 'permissions' section in RegionForSale/config.yml?
+    @Override
+    public String getHelpKey(CommandSender target) {
+        if(target.hasPermission("areashop.import")) {
+            return "help-import";
+        }
+        return null;
+    }
 
-	@Override
-	public void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("areashop.import")) {
-			messageBridge.message(sender, "import-noPermission");
-			return;
-		}
+    @Override
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
+        withConfirmation();
+        var sourceParser = AcceptedValuesParser.ofConstant(List.of("RegionForSale"), "import-wrongSource", true);
+        return builder.literal("import")
+                .required(KEY_SOURCE, ParserDescriptor.of(sourceParser, String.class))
+                .handler(this::handleCommand);
+    }
 
-		if(args.length < 2) {
-			messageBridge.message(sender, "import-help");
-			return;
-		}
+    @Override
+    protected @Nonnull CommandProperties properties() {
+        return CommandProperties.of("import");
+    }
 
-		if(!"RegionForSale".equalsIgnoreCase(args[1])) {
-			messageBridge.message(sender, "import-wrongSource");
-			return;
-		}
+    // TODO:
+    //  - Landlord?
+    //  - Friends
+    //  - Region flags?
+    //  - Settings from the 'permissions' section in RegionForSale/config.yml?
 
-		if(!confirm(sender, args, Message.fromKey("import-confirm"))) {
-			return;
-		}
-
-		importJobFactory.createImportJob(sender).execute();
-	}
-
-	@Override
-	public List<String> getTabCompleteList(int toComplete, String[] start, CommandSender sender) {
-		List<String> result = new ArrayList<>();
-		if(toComplete == 2) {
-			result.add("RegionForSale");
-		}
-		return result;
-	}
+    private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
+        CommandSender sender = context.sender();
+        if (!sender.hasPermission("areashop.import")) {
+            this.messageBridge.message(sender, "import-noPermission");
+            return;
+        }
+        String importSource = context.get(KEY_SOURCE);
+        if (!"RegionForSale".equalsIgnoreCase(importSource)) {
+            throw new AreaShopCommandException("import-wrongSource");
+        }
+        importJobFactory.createImportJob(sender).execute();
+    }
 
 }
 

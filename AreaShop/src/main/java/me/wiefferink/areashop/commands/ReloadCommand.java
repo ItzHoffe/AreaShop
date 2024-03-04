@@ -3,42 +3,56 @@ package me.wiefferink.areashop.commands;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.AreaShop;
-import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.commands.util.AreaShopCommandException;
+import me.wiefferink.areashop.commands.util.AreashopCommandBean;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandProperties;
+import org.incendo.cloud.context.CommandContext;
 
 import javax.annotation.Nonnull;
 
 @Singleton
-public class ReloadCommand extends CommandAreaShop {
+public class ReloadCommand extends AreashopCommandBean {
+    private final AreaShop plugin;
 
-	private final AreaShop plugin;
+    @Inject
+    public ReloadCommand(@Nonnull AreaShop plugin) {
+        this.plugin = plugin;
+    }
 
-	@Inject
-	public ReloadCommand(@Nonnull MessageBridge messageBridge, @Nonnull AreaShop plugin) {
-		super(messageBridge);
-		this.plugin = plugin;
-	}
-	
-	@Override
-	public String getCommandStart() {
-		return "areashop reload";
-	}
 
-	@Override
-	public String getHelp(CommandSender target) {
-		if(target.hasPermission("areashop.reload")) {
-			return "help-reload";
-		}
-		return null;
-	}
+    @Override
+    public String stringDescription() {
+        return null;
+    }
 
-	@Override
-	public void execute(CommandSender sender, String[] args) {
-		if(sender.hasPermission("areashop.reload")) {
-			// Reload the configuration files and update all region flags/signs
-			plugin.reload(sender);
-		} else {
-			messageBridge.message(sender, "reload-noPermission");
-		}
-	}
+    @Nonnull
+    @Override
+    protected Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
+        return builder.literal("reload")
+                .handler(this::handleCommand);
+    }
+
+    @Override
+    protected @NonNull CommandProperties properties() {
+        return CommandProperties.of("reload");
+    }
+
+
+    @Override
+    public String getHelpKey(CommandSender target) {
+        if (target.hasPermission("areashop.reload")) {
+            return "help-reload";
+        }
+        return null;
+    }
+
+    private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
+        if (!context.hasPermission("areashop.reload")) {
+            throw new AreaShopCommandException("reload-noPermission");
+        }
+        this.plugin.reload(context.sender());
+    }
 }

@@ -26,36 +26,30 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Singleton
-public class SellCommand extends AreashopCommandBean {
+public class StopResellCommand extends AreashopCommandBean {
 
     private final MessageBridge messageBridge;
     private final IFileManager fileManager;
-    private final CommandFlag<BuyRegion> buyRegionFlag;
+
+    private final CommandFlag<BuyRegion> regionFlag;
 
     @Inject
-    public SellCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
+    public StopResellCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
         ParserDescriptor<CommandSender, BuyRegion> regionParser =
                 ParserDescriptor.of(new BuyRegionParser<>(fileManager, this::suggestBuyRegions), BuyRegion.class);
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
-        this.buyRegionFlag = CommandFlag.builder("region").withComponent(regionParser).build();
+        this.regionFlag = CommandFlag.builder("region")
+                .withComponent(regionParser)
+                .build();
     }
 
-    /**
-     * Check if a person can sell the region.
-     *
-     * @param person The person to check
-     * @param region The region to check for
-     * @return true if the person can sell it, otherwise false
-     */
-    public static boolean canUse(CommandSender person, GeneralRegion region) {
-        if (person.hasPermission("areashop.sell")) {
-            return true;
+    @Override
+    public String getHelpKey(CommandSender target) {
+        if (target.hasPermission("areashop.stopresellall") || target.hasPermission("areashop.stopresell")) {
+            return "help-stopResell";
         }
-        if (person instanceof Player player) {
-            return region.isOwner(player) && person.hasPermission("areashop.sellown");
-        }
-        return false;
+        return null;
     }
 
     @Override
@@ -66,36 +60,43 @@ public class SellCommand extends AreashopCommandBean {
     @NotNull
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
-        return builder.literal("sell")
-                .flag(this.buyRegionFlag)
+        return builder.literal("stopresell")
+                .flag(this.regionFlag)
                 .handler(this::handleCommand);
     }
 
     @Override
     protected @NonNull CommandProperties properties() {
-        return CommandProperties.of("sell");
-    }
-
-    @Override
-    public String getHelpKey(CommandSender target) {
-        if (target.hasPermission("areashop.sell") || target.hasPermission("areashop.sellown")) {
-            return "help-sell";
-        }
-        return null;
+        return CommandProperties.of("stopresell");
     }
 
     private void handleCommand(@Nonnull CommandContext<CommandSender> context) {
         CommandSender sender = context.sender();
-        if (!sender.hasPermission("areashop.sell") && !sender.hasPermission("areashop.sellown")) {
-            this.messageBridge.message(sender, "sell-noPermission");
+        if (!sender.hasPermission("areashop.stopresell") && !sender.hasPermission("areashop.stopresellall")) {
+            this.messageBridge.message(sender, "stopresell-noPermissionOther");
             return;
         }
-        BuyRegion buy = RegionFlagUtil.getOrParseBuyRegion(context, this.buyRegionFlag);
-        if (!buy.isSold()) {
-            messageBridge.message(sender, "sell-notBought", buy);
+
+        BuyRegion buy = RegionFlagUtil.getOrParseBuyRegion(context, this.regionFlag);
+        if (!buy.isInResellingMode()) {
+            this.messageBridge.message(sender, "stopresell-notResell", buy);
             return;
         }
-        buy.sell(true, sender);
+        if (sender.hasPermission("areashop.stopresellall")) {
+            buy.disableReselling();
+            buy.update();
+            this.messageBridge.message(sender, "stopresell-success", buy);
+        } else if (sender.hasPermission("areashop.stopresell") && sender instanceof Player player) {
+            if (buy.isOwner(player)) {
+                buy.disableReselling();
+                buy.update();
+                this.messageBridge.message(sender, "stopresell-success", buy);
+            } else {
+                this.messageBridge.message(sender, "stopresell-noPermissionOther", buy);
+            }
+        } else {
+            this.messageBridge.message(sender, "stopresell-noPermission", buy);
+        }
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestBuyRegions(
@@ -104,7 +105,7 @@ public class SellCommand extends AreashopCommandBean {
     ) {
         String text = input.peekString();
         List<Suggestion> suggestions = this.fileManager.getBuysRef().stream()
-                .filter(BuyRegion::isSold)
+                .filter(region -> region.isSold() && region.isInResellingMode())
                 .map(GeneralRegion::getName)
                 .filter(name -> name.startsWith(text))
                 .map(Suggestion::simple)
