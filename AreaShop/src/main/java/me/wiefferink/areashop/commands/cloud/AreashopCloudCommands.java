@@ -59,7 +59,8 @@ public class AreashopCloudCommands {
             StackCloudCommand.class,
             StopResellCloudCommand.class,
             TeleportCloudCommand.class,
-            ToggleHomeCloudCommand.class
+            ToggleHomeCloudCommand.class,
+            TransferCloudCommand.class
     );
 
     private final MessageBridge messageBridge;
