@@ -43,6 +43,7 @@ public class AreashopCloudCommands {
             InfoCloudCommand.class,
             LinkSignsCloudCommand.class,
             MeCloudCommand.class,
+            MessageCloudCommand.class,
             RentCloudCommand.class
     );
 
