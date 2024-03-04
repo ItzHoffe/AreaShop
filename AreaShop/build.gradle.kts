@@ -25,11 +25,21 @@ dependencies {
     api("com.github.NLthijs48:InteractiveMessenger:e7749258ca")
     api("com.github.NLthijs48:BukkitDo:819d51ec2b")
     api("io.github.baked-libs:dough-data:1.2.0")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.3")
-    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.1")
-    api("com.google.inject:guice:7.0.0")
-    api("com.google.inject.extensions:guice-assistedinject:7.0.0")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.3")
+    api("com.google.inject:guice:7.0.0") {
+        exclude("com.google.guava")
+    }
+    api("com.google.inject.extensions:guice-assistedinject:7.0.0") {
+        exclude("com.google.guava")
+    }
+    implementation("org.incendo:cloud-paper:2.0.0-beta.3") {
+        exclude("com.google.guava")
+    }
+    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.1") {
+        exclude("com.google.guava")
+    }
+    implementation("org.incendo:cloud-paper:2.0.0-beta.3") {
+        exclude("com.google.guava")
+    }
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
