@@ -44,6 +44,7 @@ public class AreashopCloudCommands {
             LinkSignsCloudCommand.class,
             MeCloudCommand.class,
             MessageCloudCommand.class,
+            ReloadCommand.class,
             RentCloudCommand.class
     );
 
