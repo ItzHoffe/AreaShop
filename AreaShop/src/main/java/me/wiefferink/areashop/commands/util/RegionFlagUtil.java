@@ -94,7 +94,7 @@ public final class RegionFlagUtil {
     }
 
     @Nonnull
-    public static BuyRegion getOrParseBuyRegion(@Nonnull CommandContext<CommandSender> context, CommandFlag<BuyRegion> flag) {
+    public static BuyRegion getOrParseBuyRegion(@Nonnull CommandContext<? extends CommandSender> context, CommandFlag<BuyRegion> flag) {
         BuyRegion buyRegion = context.flags().get(flag);
         if (buyRegion != null) {
             return buyRegion;
