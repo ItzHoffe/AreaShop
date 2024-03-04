@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
+import me.wiefferink.areashop.commands.util.ValidatedOfflinePlayerParser;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.BuyRegion;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
-import org.incendo.cloud.bukkit.parser.OfflinePlayerParser;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.flag.CommandFlag;
@@ -56,7 +56,7 @@ public class AddFriendCloudCommand extends CloudCommandBean {
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
         return builder.literal("addfriend")
                 .senderType(Player.class)
-                .required(KEY_FRIEND, OfflinePlayerParser.offlinePlayerParser())
+                .required(KEY_FRIEND, ValidatedOfflinePlayerParser.validatedOfflinePlayerParser())
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);
     }

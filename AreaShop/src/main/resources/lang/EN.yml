@@ -66,6 +66,7 @@ cmd-noRegion: "'%0%' is not a valid WorldGuard region."
 cmd-noRegionsAtLocation: "No regions found at your location, specify the region as argument."
 cmd-moreRegionsAtLocation: "More than one region has been found at your location, specify the region as argument."
 cmd-automaticRegionOnlyByPlayer: "Automatically determining the region is only possible for players, specify the region as argument."
+cmd-invalidPlayer: "%0% cannot be found, probably never joined the server."
 
 help-header: "Help page, commands that you can execute."
 help-noPermission: "You do not have permission to view the help page."

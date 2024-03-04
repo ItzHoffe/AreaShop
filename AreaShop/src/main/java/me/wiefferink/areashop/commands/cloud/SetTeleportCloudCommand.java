@@ -21,8 +21,6 @@ import org.incendo.cloud.parser.flag.CommandFlag;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class SetTeleportCloudCommand extends CloudCommandBean {
