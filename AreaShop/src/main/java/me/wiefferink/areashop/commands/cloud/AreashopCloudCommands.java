@@ -50,7 +50,8 @@ public class AreashopCloudCommands {
             SchematicEventCloudCommand.class,
             SellCloudCommand.class,
             SetDurationCloudCommand.class,
-            SetLandlordCloudCommand.class
+            SetLandlordCloudCommand.class,
+            SetOwnerCloudCommand.class
     );
 
     private final MessageBridge messageBridge;
