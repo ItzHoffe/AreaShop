@@ -46,6 +46,7 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.exception.ArgumentParseException;
 import org.incendo.cloud.exception.CommandExecutionException;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
@@ -141,6 +142,8 @@ public class AreashopCommands {
                 ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
         exceptionController.registerHandler(CommandExecutionException.class,
                 ExceptionHandler.unwrappingHandler(AreaShopCommandException.class));
+        exceptionController.registerHandler(InvalidCommandSenderException.class,
+                new InvalidCommandSenderHandler(this.messageBridge));
         exceptionController.registerHandler(AreaShopCommandException.class,
                 new ArgumentParseExceptionHandler<>(this.messageBridge));
         var confirmationConfiguration = ConfirmationConfiguration.<CommandSender>builder()
