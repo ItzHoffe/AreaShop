@@ -158,7 +158,7 @@ public class FindCommand extends AreashopCommandBean {
             @Nonnull Message onlyInGroup
     ) {
         double currency = maxPriceSet ? maxPrice : balance;
-        String key = maxPriceSet ? "find-nonFoundMax" : "find-noneFound";
+        String key = maxPriceSet ? "find-noneFoundMax" : "find-noneFound";
         this.messageBridge.message(sender, key, "buy", Utils.formatCurrency(currency), onlyInGroup);
     }
 
