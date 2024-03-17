@@ -5,9 +5,12 @@ import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.AreashopCommandBean;
+import me.wiefferink.areashop.commands.util.DurationInputParser;
 import me.wiefferink.areashop.commands.util.RegionFlagUtil;
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.RentRegion;
+import me.wiefferink.areashop.tools.DurationInput;
+import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -24,14 +27,16 @@ import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.sql.Time;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class SetDurationCommand extends AreashopCommandBean {
 
     private static final CloudKey<String> KEY_DURATION = CloudKey.of("amount", String.class);
-    private static final DurationParser<CommandSender> DURATION_PARSER = new DurationParser<>();
+    private static final DurationInputParser<CommandSender> DURATION_PARSER = new DurationInputParser<>();
     private final MessageBridge messageBridge;
     private final CommandFlag<RentRegion> regionFlag;
 
@@ -92,26 +97,39 @@ public class SetDurationCommand extends AreashopCommandBean {
             this.messageBridge.message(sender, "setduration-successRemoved", rent);
             return;
         }
-        String duration = parseInternalDuration(rawDuration, context);
-        rent.setDuration(duration);
+        DurationInput duration = parseInternalDuration(rawDuration);
+        rent.setDuration(duration.toTinySpacedString());
         rent.update();
         this.messageBridge.message(sender, "setduration-success", rent);
     }
 
-    private String parseInternalDuration(String rawDuration, @Nonnull CommandContext<CommandSender> context) {
-        CommandInput tempInput = CommandInput.of(rawDuration);
-        ArgumentParseResult<Duration> parseResult = DURATION_PARSER.parse(context, tempInput);
-        Optional<Throwable> failure = parseResult.failure();
-        if (failure.isPresent()) {
-            throw new AreaShopCommandException("setduration-wrongAmount", rawDuration);
+    private DurationInput parseInternalDuration(String rawDuration) {
+        int start = 0;
+        for (int i = 0; i < rawDuration.length(); i++) {
+            if (Character.isAlphabetic(rawDuration.charAt(i))) {
+                start = i;
+                break;
+            }
         }
-        Optional<Duration> parsedDuration = parseResult.parsedValue();
-        if (parsedDuration.isEmpty()) {
-            throw new AreaShopCommandException("setduration-wrongAmount", rawDuration);
+        String duration = rawDuration.substring(0, start - 1);
+        String durationUnit = rawDuration.substring(start, duration.length() - 1);
+        int durationInt;
+        try {
+            durationInt = Integer.parseInt(duration);
+        } catch (NumberFormatException ex) {
+            throw new AreaShopCommandException("setduration-wrongAmount", duration);
         }
-        String duration = rawDuration.substring(0, rawDuration.length() - 1);
-        char durationUnit = rawDuration.charAt(rawDuration.length() - 1);
-        return String.format("%s %s", duration, durationUnit);
+        TimeUnit timeUnit = DurationInput.getTimeUnit(durationUnit)
+                .orElseThrow(() -> new AreaShopCommandException("setduration-wrongFormat", durationUnit));
+
+        boolean invalid = !switch (timeUnit) {
+            case DAYS, HOURS, MINUTES, SECONDS -> true;
+            default -> false;
+        };
+        if (invalid) {
+            throw new AreaShopCommandException("setduration-wrongFormat", durationUnit);
+        }
+        return new DurationInput(durationInt, timeUnit);
     }
 
 }
