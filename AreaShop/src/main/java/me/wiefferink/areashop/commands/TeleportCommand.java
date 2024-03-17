@@ -4,6 +4,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.AreashopCommandBean;
+import me.wiefferink.areashop.commands.util.GeneralRegionParser;
+import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,9 +26,12 @@ public class TeleportCommand extends AreashopCommandBean {
     private static final CommandFlag<Void> KEY_TO_SIGN = CommandFlag.builder("to-sign").build();
     private final MessageBridge messageBridge;
 
+    private final IFileManager fileManager;
+
     @Inject
-    public TeleportCommand(@Nonnull MessageBridge messageBridge) {
+    public TeleportCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
         this.messageBridge = messageBridge;
+        this.fileManager = fileManager;
     }
 
     /**
@@ -65,6 +70,7 @@ public class TeleportCommand extends AreashopCommandBean {
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
         return builder.literal("teleport", "tp")
                 .senderType(Player.class)
+                .required(KEY_REGION, GeneralRegionParser.generalRegionParser(this.fileManager))
                 .handler(this::handleCommand);
     }
 
