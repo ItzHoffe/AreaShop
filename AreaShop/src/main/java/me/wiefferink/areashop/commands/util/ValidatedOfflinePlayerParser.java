@@ -29,7 +29,10 @@ public class ValidatedOfflinePlayerParser<C> implements ArgumentParser<C, Offlin
         if (input.length() > 16) {
             return ArgumentParseResult.failure(new AreaShopCommandException("cmd-invalidPlayer", input));
         }
-
+        final Player onlinePlayer = Bukkit.getPlayerExact(input);
+        if (onlinePlayer != null) {
+            return ArgumentParseResult.success(onlinePlayer);
+        }
         final OfflinePlayer player;
         try {
             player = Bukkit.getOfflinePlayer(input);
