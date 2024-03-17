@@ -103,7 +103,7 @@ public class SetDurationCommand extends AreashopCommandBean {
         ArgumentParseResult<Duration> parseResult = DURATION_PARSER.parse(context, tempInput);
         Optional<Throwable> failure = parseResult.failure();
         if (failure.isPresent()) {
-            throw new CommandExecutionException(failure.get());
+            throw new AreaShopCommandException("setduration-wrongAmount", rawDuration);
         }
         Optional<Duration> parsedDuration = parseResult.parsedValue();
         if (parsedDuration.isEmpty()) {
