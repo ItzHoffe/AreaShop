@@ -82,7 +82,7 @@ public class DelFriendCommand extends AreashopCommandBean {
 
     @Override
     protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
-        return builder.literal("deletefriend", "delfriend")
+        return builder.literal("delfriend", "deletefriend")
                 .required(KEY_PLAYER, ValidatedOfflinePlayerParser.validatedOfflinePlayerParser(), this::suggestFriends)
                 .flag(this.regionFlag)
                 .handler(this::handleCommand);

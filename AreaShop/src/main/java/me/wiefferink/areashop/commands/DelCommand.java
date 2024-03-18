@@ -57,7 +57,8 @@ public class DelCommand extends AreashopCommandBean {
 
     @Override
     public String getHelpKey(CommandSender target) {
-        if(target.hasPermission("areashop.destroyrent") || target.hasPermission("areashop.destroybuy") || target.hasPermission("areashop.destroyrent.landlord") || target.hasPermission("areashop.destroybuy.landlord")) {
+        if (target.hasPermission("areashop.destroyrent") || target.hasPermission("areashop.destroybuy") || target.hasPermission(
+                "areashop.destroyrent.landlord") || target.hasPermission("areashop.destroybuy.landlord")) {
             return "help-del";
         }
         return null;
@@ -74,7 +75,7 @@ public class DelCommand extends AreashopCommandBean {
                 new GeneralRegionParser<>(this.fileManager),
                 GeneralRegion.class
         );
-        return builder.literal("delete", "del")
+        return builder.literal("del", "delete")
                 .optional(KEY_REGION, regionParser)
                 .handler(this::handleCommand);
     }

@@ -23,67 +23,68 @@ import java.util.Optional;
 @Singleton
 public class DelSignCommand extends AreashopCommandBean {
 
-	private final SignManager signManager;
-	private final MessageBridge messageBridge;
-	@Inject
-	public DelSignCommand(@Nonnull MessageBridge messageBridge, @Nonnull SignManager signManager) {
-		this.signManager = signManager;
-		this.messageBridge = messageBridge;
-	}
+    private final SignManager signManager;
+    private final MessageBridge messageBridge;
 
-	@Override
-	public String stringDescription() {
-		return null;
-	}
+    @Inject
+    public DelSignCommand(@Nonnull MessageBridge messageBridge, @Nonnull SignManager signManager) {
+        this.signManager = signManager;
+        this.messageBridge = messageBridge;
+    }
+
+    @Override
+    public String stringDescription() {
+        return null;
+    }
 
 
     @Override
     protected @Nonnull CommandProperties properties() {
-		return CommandProperties.of("deletesign", "delsign");
-	}
+        return CommandProperties.of("deletesign", "delsign");
+    }
 
-	@Override
-	protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
-		return builder.literal("deletesign", "delsign")
-				.senderType(Player.class)
-				.handler(this::handleCommand);
-	}
+    @Override
+    protected @Nonnull Command.Builder<? extends CommandSender> configureCommand(@Nonnull Command.Builder<CommandSender> builder) {
+        return builder.literal("delsign", "deletesign")
+                .senderType(Player.class)
+                .handler(this::handleCommand);
+    }
 
-	@Override
-	public String getHelpKey(CommandSender target) {
-		if(target.hasPermission("areashop.delsign")) {
-			return "help-delsign";
-		}
-		return null;
-	}
+    @Override
+    public String getHelpKey(CommandSender target) {
+        if (target.hasPermission("areashop.delsign")) {
+            return "help-delsign";
+        }
+        return null;
+    }
 
-	private void handleCommand(@Nonnull CommandContext<Player> context) {
-		Player sender = context.sender();
-		if (!sender.hasPermission("areashop.delsign")) {
-			throw new AreaShopCommandException("delsign-noPermission");
-		}
-		// Get the sign
-		Block block = null;
-		BlockIterator blockIterator = new BlockIterator(sender, 100);
-		while(blockIterator.hasNext() && block == null) {
-			Block next = blockIterator.next();
-			if(!next.getType().isAir()) {
-				block = next;
-			}
-		}
-		if(block == null || !Materials.isSign(block.getType())) {
-			throw new AreaShopCommandException("delsign-noSign");
-		}
-		Optional<RegionSign> optionalSign = signManager.removeSign(block.getLocation());
-		if(optionalSign.isEmpty()) {
-			throw new AreaShopCommandException("delsign-noRegion");
-		}
-		RegionSign regionSign = optionalSign.get();
-		messageBridge.message(sender, "delsign-success", regionSign.getRegion());
-		regionSign.remove();
-		// Sometimes the RegionSign data is corrupted. Forcefully set the block to air
-		block.setType(Material.AIR);
-	}
+    private void handleCommand(@Nonnull CommandContext<Player> context) {
+        Player sender = context.sender();
+        if (!sender.hasPermission("areashop.delsign")) {
+            throw new AreaShopCommandException("delsign-noPermission");
+        }
+        // Get the sign
+        Block block = null;
+        BlockIterator blockIterator = new BlockIterator(sender, 100);
+        while (blockIterator.hasNext() && block == null) {
+            Block next = blockIterator.next();
+            if (!next.getType().isAir()) {
+                block = next;
+            }
+        }
+        if (block == null || !Materials.isSign(block.getType())) {
+            throw new AreaShopCommandException("delsign-noSign");
+        }
+        Optional<RegionSign> optionalSign = signManager.removeSign(block.getLocation());
+        if (optionalSign.isEmpty()) {
+            throw new AreaShopCommandException("delsign-noRegion");
+        }
+        RegionSign regionSign = optionalSign.get();
+        messageBridge.message(sender, "delsign-success", regionSign.getRegion());
+        regionSign.remove();
+        // Sometimes the RegionSign data is corrupted. Forcefully set the block to air
+        block.setType(Material.AIR);
+    }
 
 }
 

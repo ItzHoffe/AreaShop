@@ -68,7 +68,7 @@ public class TeleportCommand extends AreashopCommandBean {
     @NotNull
     @Override
     protected Command.Builder<? extends CommandSender> configureCommand(@NotNull Command.Builder<CommandSender> builder) {
-        return builder.literal("teleport", "tp")
+        return builder.literal("tp", "teleport")
                 .senderType(Player.class)
                 .required(KEY_REGION, GeneralRegionParser.generalRegionParser(this.fileManager))
                 .handler(this::handleCommand);
