@@ -29,6 +29,9 @@ public class SimpleMessageBridge implements MessageBridge {
     }
 
     public static void send(Message message, CommandSender target) {
+        if (target == null) {
+            return;
+        }
         if (!AreaShop.useMiniMessage()) {
             message.send(target);
             return;
@@ -44,6 +47,9 @@ public class SimpleMessageBridge implements MessageBridge {
     }
 
     public static void send(Message message, Object target) {
+        if (target == null) {
+            return;
+        }
         if (!AreaShop.useMiniMessage()) {
             message.send(target);
             return;
