@@ -5,7 +5,7 @@ plugins {
     java
     `java-library`
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.5.11" apply false
+    id("io.papermc.paperweight.userdev") version "1.7.0" apply false
     id("com.github.spotbugs") version "5.1.3"
     idea
     eclipse
@@ -14,7 +14,7 @@ plugins {
 group = "me.wiefferink"
 version = "2.8.0"
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 val encoding = Charsets.UTF_8
 val encodingName: String = encoding.name()
 
@@ -37,6 +37,12 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://oss.sonatype.org/content/groups/public/")
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatype-oss-snapshots"
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven {

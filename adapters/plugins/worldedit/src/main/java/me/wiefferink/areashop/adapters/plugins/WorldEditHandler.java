@@ -26,10 +26,10 @@ import com.sk89q.worldedit.world.entity.EntityType;
 import com.sk89q.worldedit.world.entity.EntityTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.wiefferink.areashop.interfaces.AreaShopInterface;
+import me.wiefferink.areashop.interfaces.ExceptionUtil;
 import me.wiefferink.areashop.interfaces.GeneralRegionInterface;
 import me.wiefferink.areashop.interfaces.WorldEditInterface;
 import me.wiefferink.areashop.interfaces.WorldEditSelection;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -38,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Objects;
 
 public class WorldEditHandler extends WorldEditInterface {
 
@@ -119,11 +118,13 @@ public class WorldEditHandler extends WorldEditInterface {
 			Operations.complete(operation);
 			return true;
 		} catch (IOException | WorldEditException ex) {
+
 			pluginInterface.getLogger().warning(() ->"An error occurred while restoring schematic of " + regionInterface.getName() + ", enable debug to see the complete stacktrace");
-			pluginInterface.debugI(() -> ExceptionUtils.getStackTrace(ex));
+
+			pluginInterface.debugI(() -> ExceptionUtil.getStackTrace(ex));
 		} catch (Exception ex) {
 			pluginInterface.getLogger().warning(() -> "crashed during restore of " + regionInterface.getName());
-			pluginInterface.debugI(() -> ExceptionUtils.getStackTrace(ex));
+			pluginInterface.debugI(() -> ExceptionUtil.getStackTrace(ex));
 		}
 		return false;
 	}
@@ -153,7 +154,7 @@ public class WorldEditHandler extends WorldEditInterface {
 			Operations.complete(copy);
 		} catch (WorldEditException ex) {
 			pluginInterface.getLogger().warning(() -> "An error occurred while saving schematic of " + regionInterface.getName() + ", enable debug to see the complete stacktrace");
-			pluginInterface.debugI(() -> ExceptionUtils.getStackTrace(ex));
+			pluginInterface.debugI(() -> ExceptionUtil.getStackTrace(ex));
 		}
 		try (OutputStream os = new FileOutputStream(targetFile);
 			 ClipboardWriter writer = format.getWriter(os)) {
@@ -161,10 +162,10 @@ public class WorldEditHandler extends WorldEditInterface {
 			return true;
 		} catch (IOException ex) {
 			pluginInterface.getLogger().warning(() -> "An error occurred while saving schematic of " + regionInterface.getName() + ", enable debug to see the complete stacktrace");
-			pluginInterface.debugI(() -> ExceptionUtils.getStackTrace(ex));
+			pluginInterface.debugI(() -> ExceptionUtil.getStackTrace(ex));
 		} catch (Exception ex) {
 			pluginInterface.getLogger().warning(() -> "crashed during save of " + regionInterface.getName());
-			pluginInterface.debugI(() -> ExceptionUtils.getStackTrace(ex));
+			pluginInterface.debugI(() -> ExceptionUtil.getStackTrace(ex));
 		}
 		return false;
 	}
@@ -192,7 +193,7 @@ public class WorldEditHandler extends WorldEditInterface {
 			return false;
 		} catch (WorldEditException ex) {
 			pluginInterface.getLogger().warning("crashed during save of " + regionInterface.getName());
-			pluginInterface.debugI(ExceptionUtils.getStackTrace(ex));
+			pluginInterface.debugI(ExceptionUtil.getStackTrace(ex));
 			return true;
 		}
 	}

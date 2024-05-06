@@ -1,6 +1,6 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.2.3"
+    id("io.github.goooler.shadow") version "8.1.7"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 idea {
@@ -132,15 +132,15 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.18.2")
+        minecraftVersion("1.20.4")
 
         downloadPlugins {
             github("EssentialsX", "essentials", "2.20.1", "EssentialsX-2.20.1.jar")
             github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
-            // WorldEdit 7.2.19
-            url("https://mediafilez.forgecdn.net/files/5077/477/worldedit-bukkit-7.2.19.jar")
-            // WorldGuard 7.0.7
-            url("https://mediafilez.forgecdn.net/files/3677/516/worldguard-bukkit-7.0.7-dist.jar")
+            // WorldEdit 7.3.0
+            url("https://mediafilez.forgecdn.net/files/5168/643/worldedit-bukkit-7.3.0.jar")
+            // WorldGuard 7.0.9
+            url("https://mediafilez.forgecdn.net/files/4675/318/worldguard-bukkit-7.0.9-dist.jar")
         }
     }
 }
