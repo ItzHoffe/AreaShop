@@ -12,6 +12,7 @@ import me.wiefferink.areashop.regions.RegionFactory;
 import me.wiefferink.areashop.regions.RegionGroup;
 import me.wiefferink.areashop.tools.Utils;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
@@ -36,7 +37,7 @@ public class GroupDelCommand extends AreashopCommandBean {
     private final IFileManager fileManager;
     private final RegionFactory regionFactory;
     private final MessageBridge messageBridge;
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public GroupDelCommand(
@@ -88,7 +89,7 @@ public class GroupDelCommand extends AreashopCommandBean {
             group = regionFactory.createRegionGroup(rawGroup);
             fileManager.addGroup(group);
         }
-        GeneralRegion declaredRegion = context.flags().get(this.regionFlag);
+        GeneralRegion declaredRegion = (GeneralRegion) context.flags().get(this.regionFlag);
         if (declaredRegion != null) {
             if (!group.removeMember(declaredRegion)) {
                 throw new AreaShopCommandException("groupdel-failed", group.getName(), declaredRegion);

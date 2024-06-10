@@ -27,7 +27,7 @@ public class SetLandlordCommand extends AreashopCommandBean {
     private static final CloudKey<OfflinePlayer> KEY_PLAYER = CloudKey.of("player", OfflinePlayer.class);
 
     private final MessageBridge messageBridge;
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public SetLandlordCommand(

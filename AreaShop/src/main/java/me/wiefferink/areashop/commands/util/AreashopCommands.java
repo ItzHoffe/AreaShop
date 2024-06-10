@@ -54,6 +54,7 @@ import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.processors.cache.GuavaCache;
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
@@ -111,7 +112,7 @@ public class AreashopCommands {
     private final MessageBridge messageBridge;
 
     private final Injector injector;
-    private final PaperCommandManager<CommandSender> commandManager;
+    private final LegacyPaperCommandManager<CommandSender> commandManager;
 
     private final List<AreashopCommandBean> commands = new ArrayList<>();
     private HelpRenderer helpRenderer;
@@ -119,7 +120,7 @@ public class AreashopCommands {
     @Inject
     AreashopCommands(@Nonnull Injector injector, @Nonnull Plugin plugin, @Nonnull MessageBridge messageBridge) {
         this.injector = injector;
-        this.commandManager = new PaperCommandManager<>(
+        this.commandManager = new LegacyPaperCommandManager<>(
                 plugin,
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.identity()

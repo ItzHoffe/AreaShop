@@ -28,7 +28,7 @@ import java.util.UUID;
 public class SetOwnerCommand extends AreashopCommandBean {
 
     private static final CloudKey<OfflinePlayer> KEY_PLAYER = CloudKey.of("player", OfflinePlayer.class);
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     private final MessageBridge messageBridge;
 

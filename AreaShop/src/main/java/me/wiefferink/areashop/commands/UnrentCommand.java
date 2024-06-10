@@ -32,7 +32,7 @@ public class UnrentCommand extends AreashopCommandBean {
 
     @Inject
     public UnrentCommand(@Nonnull IFileManager fileManager) {
-        ParserDescriptor<CommandSender, RentRegion> regionParser =
+        ParserDescriptor<? super Object, RentRegion> regionParser =
                 ParserDescriptor.of(new RentRegionParser<>(fileManager, this::suggestRegions), RentRegion.class);
         this.fileManager = fileManager;
         this.regionFlag = CommandFlag.builder("region")
@@ -97,7 +97,7 @@ public class UnrentCommand extends AreashopCommandBean {
 
     @Nonnull
     private CompletableFuture<Iterable<Suggestion>> suggestRegions(
-            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();

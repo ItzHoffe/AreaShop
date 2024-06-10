@@ -2,6 +2,7 @@ package me.wiefferink.areashop.commands;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.leangen.geantyref.TypeToken;
 import me.wiefferink.areashop.MessageBridge;
 import me.wiefferink.areashop.commands.util.AreaShopCommandException;
 import me.wiefferink.areashop.commands.util.AreashopCommandBean;
@@ -37,7 +38,7 @@ public final class ToggleHomeCommand extends AreashopCommandBean {
     private static final CloudKey<HomeAccessType> KEY_ACCESS_TYPE = CloudKey.of("accessType", HomeAccessType.class);
     private final MessageBridge messageBridge;
     private final IFileManager fileManager;
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public ToggleHomeCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
@@ -45,7 +46,7 @@ public final class ToggleHomeCommand extends AreashopCommandBean {
         this.fileManager = fileManager;
         this.regionFlag = CommandFlag.builder("region")
                 .withComponent(
-                        new CommandComponent.Builder<CommandSender, GeneralRegion>()
+                        CommandComponent.builder()
                                 .name("region")
                                 .description(Description.EMPTY)
                                 .valueType(GeneralRegion.class)
@@ -101,11 +102,11 @@ public final class ToggleHomeCommand extends AreashopCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestRegions(
-            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();
-        CommandSender sender = context.sender();
+        CommandSender sender = (CommandSender) context.sender();
         Stream<GeneralRegion> regions;
         if (sender.hasPermission("sethome.control.other")) {
             regions = this.fileManager.getRegionsRef().stream();

@@ -15,6 +15,7 @@ import me.wiefferink.areashop.regions.RentRegion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
@@ -34,7 +35,7 @@ public class DelFriendCommand extends AreashopCommandBean {
 
     private static final CloudKey<OfflinePlayer> KEY_PLAYER = CloudKey.of("player", OfflinePlayer.class);
     private final MessageBridge messageBridge;
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public DelFriendCommand(

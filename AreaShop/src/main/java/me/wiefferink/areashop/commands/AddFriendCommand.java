@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
 public class AddFriendCommand extends AreashopCommandBean {
 
     private static final CloudKey<OfflinePlayer> KEY_FRIEND = CloudKey.of("friend", OfflinePlayer.class);
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
     private final MessageBridge messageBridge;
     private final Plugin plugin;
 

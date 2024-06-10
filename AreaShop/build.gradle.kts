@@ -31,10 +31,10 @@ dependencies {
     api("com.google.inject.extensions:guice-assistedinject:7.0.0") {
         exclude("com.google.guava")
     }
-    implementation("org.incendo:cloud-paper:2.0.0-beta.5") {
+    implementation("org.incendo:cloud-paper:2.0.0-beta.8") {
         exclude("com.google.guava")
     }
-    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.2") {
+    implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.3") {
         exclude("com.google.guava")
     }
     implementation("net.kyori:adventure-text-minimessage:4.16.0")

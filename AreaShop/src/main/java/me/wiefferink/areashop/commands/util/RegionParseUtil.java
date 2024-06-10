@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -25,7 +26,7 @@ public final class RegionParseUtil {
     }
 
     @Nonnull
-    public static CommandFlag<GeneralRegion> createDefault(@Nonnull IFileManager fileManager) {
+    public static @NonNull CommandFlag<GeneralRegion> createDefault(@Nonnull IFileManager fileManager) {
         return CommandFlag.builder("region")
                 .withComponent(GeneralRegionParser.generalRegionParser(fileManager))
                 .build();
@@ -34,13 +35,13 @@ public final class RegionParseUtil {
     @Nonnull
     public static Collection<GeneralRegion> getOrParseRegionsInSel(
             @Nonnull CommandContext<CommandSender> context,
-            @Nonnull CommandFlag<GeneralRegion> regionFlag
+            @Nonnull @NonNull CommandFlag<GeneralRegion> regionFlag
     ) {
         CommandSender sender = context.sender();
         if (!(sender instanceof Player player)) {
             throw new AreaShopCommandException("cmd-weOnlyByPlayer");
         }
-        GeneralRegion declaredRegion = context.flags().get(regionFlag);
+        GeneralRegion declaredRegion = (GeneralRegion) context.flags().get(regionFlag);
         if (declaredRegion != null) {
             return List.of(declaredRegion);
         }
@@ -157,5 +158,5 @@ public final class RegionParseUtil {
         }
         return regions.get(0);
     }
-    
+
 }

@@ -2,6 +2,7 @@ package me.wiefferink.areashop.commands.util;
 
 import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.regions.GeneralRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
@@ -25,7 +26,7 @@ public class GeneralRegionParser<C> implements ArgumentParser<C, GeneralRegion> 
         this(fileManager, defaultProvider(fileManager));
     }
 
-    public static <C> ParserDescriptor<C, GeneralRegion> generalRegionParser(@Nonnull IFileManager fileManager) {
+    public static @NonNull <C> ParserDescriptor<? super Object, GeneralRegion> generalRegionParser(@Nonnull IFileManager fileManager) {
         return ParserDescriptor.of(new GeneralRegionParser<>(fileManager), GeneralRegion.class);
     }
 

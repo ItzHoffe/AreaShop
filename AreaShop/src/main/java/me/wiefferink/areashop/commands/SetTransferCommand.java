@@ -25,7 +25,7 @@ public class SetTransferCommand extends AreashopCommandBean {
 
     private static final CloudKey<Boolean> KEY_ENABLED = CloudKey.of("enabled", Boolean.class);
     private final MessageBridge messageBridge;
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     @Inject
     public SetTransferCommand(

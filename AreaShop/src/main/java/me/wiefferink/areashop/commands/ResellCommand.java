@@ -14,9 +14,11 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandProperties;
+import org.incendo.cloud.component.CommandComponent;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.flag.CommandFlag;
 import org.incendo.cloud.parser.standard.DoubleParser;
@@ -39,11 +41,14 @@ public class ResellCommand extends AreashopCommandBean {
     public ResellCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
-        ParserDescriptor<CommandSender, BuyRegion> regionParser = ParserDescriptor.of(
+        ParserDescriptor<? super Object, BuyRegion> regionParser = ParserDescriptor.of(
                 new BuyRegionParser<>(fileManager, this::suggestBuyRegions),
                 BuyRegion.class
         );
-        this.regionFlag = CommandFlag.builder("region").withComponent(regionParser).build();
+
+        this.regionFlag = CommandFlag.builder("region")
+                .withComponent(regionParser)
+                .build();
     }
 
     @Override
@@ -111,7 +116,7 @@ public class ResellCommand extends AreashopCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestBuyRegions(
-            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();

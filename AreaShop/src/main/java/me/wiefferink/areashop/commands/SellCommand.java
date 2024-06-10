@@ -1,5 +1,6 @@
 package me.wiefferink.areashop.commands;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.wiefferink.areashop.MessageBridge;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Singleton
@@ -34,7 +36,7 @@ public class SellCommand extends AreashopCommandBean {
 
     @Inject
     public SellCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
-        ParserDescriptor<CommandSender, BuyRegion> regionParser =
+        ParserDescriptor<? super Object, BuyRegion> regionParser =
                 ParserDescriptor.of(new BuyRegionParser<>(fileManager, this::suggestBuyRegions), BuyRegion.class);
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
@@ -99,7 +101,7 @@ public class SellCommand extends AreashopCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestBuyRegions(
-            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();

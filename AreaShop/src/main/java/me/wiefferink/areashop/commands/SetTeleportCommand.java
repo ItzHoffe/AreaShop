@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 public class SetTeleportCommand extends AreashopCommandBean {
 
     private static final CommandFlag<Void> FLAG_RESET = CommandFlag.builder("reset").build();
-    private final CommandFlag<GeneralRegion> regionFlag;
+    private final @NonNull CommandFlag<GeneralRegion> regionFlag;
 
     private final MessageBridge messageBridge;
 

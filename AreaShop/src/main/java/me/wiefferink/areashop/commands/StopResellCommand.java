@@ -35,7 +35,7 @@ public class StopResellCommand extends AreashopCommandBean {
 
     @Inject
     public StopResellCommand(@Nonnull MessageBridge messageBridge, @Nonnull IFileManager fileManager) {
-        ParserDescriptor<CommandSender, BuyRegion> regionParser =
+        ParserDescriptor<? super Object, BuyRegion> regionParser =
                 ParserDescriptor.of(new BuyRegionParser<>(fileManager, this::suggestBuyRegions), BuyRegion.class);
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
@@ -100,7 +100,7 @@ public class StopResellCommand extends AreashopCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestBuyRegions(
-            @Nonnull CommandContext<CommandSender> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();

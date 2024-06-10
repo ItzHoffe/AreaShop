@@ -21,7 +21,7 @@ public class InvalidCommandSenderHandler implements ExceptionHandler<CommandSend
     @Override
     public void handle(@NonNull ExceptionContext<CommandSender, InvalidCommandSenderException> context) throws Throwable {
         InvalidCommandSenderException exception = context.exception();
-        if (exception.requiredSender().equals(Player.class)) {
+        if (exception.requiredSenderTypes().contains(Player.class)) {
             this.messageBridge.message(exception.commandSender(), "cmd-onlyByPlayer");
             return;
         }

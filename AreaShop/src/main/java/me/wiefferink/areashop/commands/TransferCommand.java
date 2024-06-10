@@ -43,7 +43,7 @@ public class TransferCommand extends AreashopCommandBean {
             @Nonnull MessageBridge messageBridge,
             @Nonnull IFileManager fileManager
     ) {
-        ParserDescriptor<Player, GeneralRegion> regionParser =
+        ParserDescriptor<? super Object, GeneralRegion> regionParser =
                 ParserDescriptor.of(new GeneralRegionParser<>(fileManager, this::suggestRegions), GeneralRegion.class);
         this.messageBridge = messageBridge;
         this.fileManager = fileManager;
@@ -124,7 +124,7 @@ public class TransferCommand extends AreashopCommandBean {
     }
 
     private CompletableFuture<Iterable<Suggestion>> suggestRegions(
-            @Nonnull CommandContext<Player> context,
+            @Nonnull CommandContext<? super Object> context,
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();
