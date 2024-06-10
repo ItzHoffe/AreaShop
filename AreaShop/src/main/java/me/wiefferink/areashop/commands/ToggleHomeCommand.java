@@ -46,11 +46,10 @@ public final class ToggleHomeCommand extends AreashopCommandBean {
         this.fileManager = fileManager;
         this.regionFlag = CommandFlag.builder("region")
                 .withComponent(
-                        CommandComponent.builder()
+                        CommandComponent.builder("region", GeneralRegionParser.generalRegionParser(fileManager))
                                 .name("region")
                                 .description(Description.EMPTY)
                                 .valueType(GeneralRegion.class)
-                                .parser(GeneralRegionParser.generalRegionParser(fileManager))
                                 .suggestionProvider(this::suggestRegions)
                                 .build()
                 ).build();

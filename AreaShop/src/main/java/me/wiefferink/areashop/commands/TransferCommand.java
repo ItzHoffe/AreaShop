@@ -128,7 +128,7 @@ public class TransferCommand extends AreashopCommandBean {
             @Nonnull CommandInput input
     ) {
         String text = input.peekString();
-        UUID uuid = context.sender().getUniqueId();
+        UUID uuid = ((Player) context.sender()).getUniqueId();
         List<Suggestion> suggestions = this.fileManager.getRegions()
                 .stream()
                 .filter(region -> region.isOwner(uuid) || region.isLandlord(uuid))
