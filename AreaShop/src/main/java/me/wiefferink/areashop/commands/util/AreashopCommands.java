@@ -41,6 +41,8 @@ import me.wiefferink.areashop.commands.SetTransferCommand;
 import me.wiefferink.areashop.commands.StackCommand;
 import me.wiefferink.areashop.commands.StopResellCommand;
 import me.wiefferink.areashop.commands.TeleportCommand;
+import me.wiefferink.areashop.commands.ToggleHomeCommand;
+import me.wiefferink.areashop.commands.TransferCommand;
 import me.wiefferink.areashop.commands.UnrentCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -53,6 +55,7 @@ import org.incendo.cloud.exception.handling.ExceptionController;
 import org.incendo.cloud.exception.handling.ExceptionHandler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
+import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.processors.cache.GuavaCache;
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration;
 import org.incendo.cloud.processors.confirmation.ConfirmationManager;
@@ -101,6 +104,8 @@ public class AreashopCommands {
             StackCommand.class,
             StopResellCommand.class,
             TeleportCommand.class,
+            ToggleHomeCommand.class,
+            TransferCommand.class,
             UnrentCommand.class
     );
 
