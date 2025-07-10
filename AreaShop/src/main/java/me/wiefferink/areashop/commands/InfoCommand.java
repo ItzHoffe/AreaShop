@@ -25,6 +25,7 @@ import org.incendo.cloud.parser.standard.IntegerParser;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -153,7 +154,7 @@ public class InfoCommand extends AreashopCommandBean {
         int itemsPerPage = maximumItems - 2;
         List<? extends GeneralRegion> regions;
         if (filterGroup != null) {
-            regions = regionStream.filter(generalRegion -> !filterGroup.isMember(generalRegion)).toList();
+            regions = regionStream.filter(filterGroup::isMember).toList();
         } else {
             regions = regionStream.toList();
         }
@@ -167,7 +168,24 @@ public class InfoCommand extends AreashopCommandBean {
             if (typeCompare != 0) {
                 return typeCompare;
             } else {
-                return one.getName().compareTo(two.getName());
+                // Split the names into the textual and numeric parts
+                String nameOne = one.getName();
+                String nameTwo = two.getName();
+
+                String prefixOne = nameOne.replaceAll("\\d", ""); // Extract textual part
+                String prefixTwo = nameTwo.replaceAll("\\d", ""); // Extract textual part
+
+                // First, compare the textual part
+                int nameCompare = prefixOne.compareTo(prefixTwo);
+                if (nameCompare != 0) {
+                    return nameCompare;
+                } else {
+                    // Extract numeric parts and compare them as integers
+                    int numberOne = Integer.parseInt(nameOne.replaceAll("\\D", ""));
+                    int numberTwo = Integer.parseInt(nameTwo.replaceAll("\\D", ""));
+
+                    return Integer.compare(numberOne, numberTwo);
+                }
             }
         }).toList();
         // Header

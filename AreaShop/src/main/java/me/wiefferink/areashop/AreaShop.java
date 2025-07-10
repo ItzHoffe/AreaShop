@@ -27,7 +27,6 @@ import me.wiefferink.areashop.modules.BukkitModule;
 import me.wiefferink.areashop.modules.DependencyModule;
 import me.wiefferink.areashop.modules.PlatformModule;
 import me.wiefferink.areashop.services.ServiceManager;
-import me.wiefferink.areashop.tools.GithubUpdateCheck;
 import me.wiefferink.areashop.tools.LanguageConverter;
 import me.wiefferink.areashop.tools.SimpleMessageBridge;
 import me.wiefferink.areashop.tools.SpigotPlatform;
@@ -37,15 +36,14 @@ import me.wiefferink.areashop.tools.version.VersionUtil;
 import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.interactivemessenger.source.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -89,7 +87,6 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 	private boolean debug = false;
 	private List<String> chatprefix = null;
 	private boolean ready = false;
-	private GithubUpdateCheck githubUpdateCheck = null;
 
 	private final ServiceManager serviceManager = new ServiceManager();
 
@@ -305,28 +302,6 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 		registerDynamicPermissions();
 
 		// Don't initialize the updatechecker if disabled in the config
-		if(getConfig().getBoolean("checkForUpdates")) {
-			githubUpdateCheck = new GithubUpdateCheck(
-					this,
-					"md5sha256",
-					"AreaShop"
-			).withVersionComparator((latestVersion, currentVersion) -> {
-				Version latest = Version.parse(cleanVersion(latestVersion));
-				Version current = Version.parse(cleanVersion(currentVersion));
-				return latest.versionData().isNewerThan(current.versionData());
-			}
-			).checkUpdate(result -> {
-				AreaShop.debug("Update check result:", result);
-				if(!result.hasUpdate()) {
-					return;
-				}
-
-				AreaShop.info("Update from AreaShop V" + cleanVersion(result.getCurrentVersion()) + " to AreaShop V" + cleanVersion(result.getLatestVersion()) + " available, get the latest version at https://github.com/md5sha256/AreaShop/releases");
-				for(Player player : Utils.getOnlinePlayers()) {
-					notifyUpdate(player);
-				}
-			});
-		}
 	}
 
 	/**
@@ -334,9 +309,6 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 	 * @param sender CommandSender to notify
 	 */
 	public void notifyUpdate(CommandSender sender) {
-		if(githubUpdateCheck != null && githubUpdateCheck.hasUpdate() && sender.hasPermission("areashop.notifyupdate")) {
-			messageBridge.message(sender, "update-playerNotify", cleanVersion(githubUpdateCheck.getCurrentVersion()), cleanVersion(githubUpdateCheck.getLatestVersion()));
-		}
 	}
 
 	private void shutdownOnError() {

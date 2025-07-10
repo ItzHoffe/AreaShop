@@ -9,6 +9,7 @@ import me.wiefferink.areashop.regions.RentRegion;
 public class RentedRegionEvent extends NotifyRegionEvent<RentRegion> {
 
 	private final boolean extended;
+	private final long before;
 
 	/**
 	 * Constructor.
@@ -19,6 +20,14 @@ public class RentedRegionEvent extends NotifyRegionEvent<RentRegion> {
 		super(region);
 		this.region = region;
 		this.extended = extended;
+		this.before = 0;
+	}
+
+	public RentedRegionEvent(RentRegion region, boolean extended, long before) {
+		super(region);
+		this.region = region;
+		this.extended = extended;
+		this.before = before;
 	}
 
 	/**
@@ -27,5 +36,9 @@ public class RentedRegionEvent extends NotifyRegionEvent<RentRegion> {
 	 */
 	public boolean hasExtended() {
 		return extended;
+	}
+
+	public long getBefore() {
+		return before;
 	}
 }

@@ -4,6 +4,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.MessageBridge;
+import me.wiefferink.areashop.events.ask.MoneyBackRegionEvent;
 import me.wiefferink.areashop.events.ask.RentingRegionEvent;
 import me.wiefferink.areashop.events.ask.UnrentingRegionEvent;
 import me.wiefferink.areashop.events.notify.RentedRegionEvent;
@@ -25,6 +26,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -352,12 +354,12 @@ public class RentRegion extends GeneralRegion {
 	 * @return The amount of money the player should get back
 	 */
 	public double getMoneyBackAmount() {
-		long currentTime = Calendar.getInstance().getTimeInMillis();
-		Double timeLeft = (double)(getRentedUntil() - currentTime);
-		double percentage = (getMoneyBackPercentage()) / 100.0;
-		Double timePeriod = (double)(getDuration());
-		double periods = timeLeft / timePeriod;
-		return Math.max(0, periods * getPrice() * percentage);
+		MoneyBackRegionEvent event = new MoneyBackRegionEvent(this);
+		Bukkit.getPluginManager().callEvent(event);
+		if(event.isCancelled()) {
+			return 0;
+		}
+		return Math.max(0, event.getPrice());
 	}
 
 	/**
@@ -603,12 +605,12 @@ public class RentRegion extends GeneralRegion {
 		if(getLandlord() != null) {
 			landlordPlayer = Bukkit.getOfflinePlayer(getLandlord());
 		}
-		String landlordName = getLandlordName();
+		UUID landlordName = getLandlord();
 		if(landlordName != null) {
 			if(landlordPlayer != null && landlordPlayer.getName() != null) {
 				r = economy.depositPlayer(landlordPlayer, getWorldName(), price);
 			} else {
-				r = economy.depositPlayer(landlordName, getWorldName(), price);
+				r = economy.depositPlayer(Bukkit.getOfflinePlayer(landlordName), getWorldName(), price);
 			}
 			if(r == null || !r.transactionSuccess()) {
 				AreaShop.warn("Something went wrong with paying '" + landlordName + "' " + Utils.formatCurrency(price) + " for his rent of region " + getName() + " to " + offlinePlayer.getName());
@@ -624,6 +626,8 @@ public class RentRegion extends GeneralRegion {
 		} else {
 			calendar.setTimeInMillis(calendar.getTimeInMillis() + getDuration());
 		}
+
+		long before = getRentedUntil();
 
 		// Add values to the rent and send it to FileManager
 		setRentedUntil(calendar.getTimeInMillis());
@@ -648,7 +652,7 @@ public class RentRegion extends GeneralRegion {
 		}
 
 		// Notify about updates
-		this.notifyAndUpdate(new RentedRegionEvent(this, extend));
+		this.notifyAndUpdate(new RentedRegionEvent(this, extend, before));
 		return true;
 	}
 
@@ -762,7 +766,7 @@ public class RentRegion extends GeneralRegion {
 		//AreaShop.debug("currentTime=" + Calendar.getInstance().getTimeInMillis() + ", getLastPlayed()=" + lastPlayed + ", timeInactive=" + (Calendar.getInstance().getTimeInMillis()-player.getLastPlayed()) + ", inactiveSetting=" + inactiveSetting);
 		if(Calendar.getInstance().getTimeInMillis() > (lastPlayed + inactiveSetting)) {
 			AreaShop.info("Region " + getName() + " unrented because of inactivity for player " + getPlayerName());
-			AreaShop.debug("currentTime=" + Calendar.getInstance().getTimeInMillis() + ", getLastPlayed()=" + lastPlayed + ", timeInactive=" + (Calendar.getInstance().getTimeInMillis() - player.getLastPlayed()) + ", inactiveSetting=" + inactiveSetting);
+			AreaShop.debug("currentTime=" + Calendar.getInstance().getTimeInMillis() + ", getLastPlayed()=" + lastPlayed + ", timeInactive=" + (Calendar.getInstance().getTimeInMillis() - player.getLastSeen()) + ", inactiveSetting=" + inactiveSetting);
 			return this.unRent(true, null);
 		}
 		return false;

@@ -4,7 +4,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.HangingSign;
 import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallHangingSign;
 import org.bukkit.block.data.type.WallSign;
 
 /**
@@ -32,12 +34,13 @@ public final class SignUtils {
         BlockState blockState = block.getState();
         BlockData blockData = blockState.getBlockData();
 
-        if (blockData instanceof WallSign wallSign) {
-            return wallSign.getFacing();
-        } else if (blockData instanceof org.bukkit.block.data.type.Sign sign) {
-            return sign.getRotation();
-        }
-        return null;
+        return switch (blockData) {
+            case WallSign wallSign -> wallSign.getFacing();
+            case Sign sign -> sign.getRotation();
+            case HangingSign hangingSign -> hangingSign.getRotation();
+            case WallHangingSign wallHangingSign -> wallHangingSign.getFacing();
+            default -> null;
+        };
     }
 
     /**

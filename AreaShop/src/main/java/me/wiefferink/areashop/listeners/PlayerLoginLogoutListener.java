@@ -11,9 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import javax.annotation.Nonnull;
@@ -42,10 +41,7 @@ public final class PlayerLoginLogoutListener implements Listener {
 	 * @param event The event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerLogin(PlayerLoginEvent event) {
-		if(event.getResult() != Result.ALLOWED) {
-			return;
-		}
+	public void onPlayerLogin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
 		// Schedule task to check for notifications, prevents a lag spike at login

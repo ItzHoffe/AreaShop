@@ -1,10 +1,10 @@
 [versions]
 # Platforms
-minecraft = "1.21.1-R0.1-SNAPSHOT"
+minecraft = "1.21.7-R0.1-SNAPSHOT"
 
 # Minecraft Plugins
-worldedit = "7.3.3"
-worldguard = "7.0.10"
+worldedit = "7.3.14"
+worldguard = "7.0.13"
 fawe = "2.10.0"
 
 [libraries]

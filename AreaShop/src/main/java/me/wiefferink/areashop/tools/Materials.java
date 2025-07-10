@@ -32,7 +32,7 @@ public class Materials {
 	 * @return true if the given material is a sign
 	 */
 	public static boolean isSign(Material material) {
-		return Tag.SIGNS.isTagged(material);
+		return Tag.ALL_SIGNS.isTagged(material);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly(libs.spigot)
+    compileOnly(libs.paper)
     compileOnly(projects.areashopInterface)
     compileOnly(libs.fastasyncworldeditCore) {
         exclude("net.kyori", "adventure-text-minimessage")

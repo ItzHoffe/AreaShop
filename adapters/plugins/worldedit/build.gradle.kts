@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly(libs.spigot)
+    compileOnly(libs.paper)
     compileOnly(projects.areashopInterface)
     compileOnly(libs.worldeditCore)
     compileOnly(libs.worldeditBukkit)

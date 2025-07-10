@@ -11,5 +11,7 @@ repositories {
 
 dependencies {
     compileOnly(projects.areashop)
-    compileOnly("net.essentialsx:EssentialsX:2.20.1")
+    compileOnly("net.essentialsx:EssentialsX:2.21.1") {
+        exclude("org.spigotmc", "spigot-api")
+    }
 }

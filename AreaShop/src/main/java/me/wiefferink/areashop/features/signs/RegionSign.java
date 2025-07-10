@@ -12,6 +12,7 @@ import me.wiefferink.areashop.tools.Materials;
 import me.wiefferink.areashop.tools.SignUtils;
 import me.wiefferink.areashop.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +22,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.HangingSign;
+import org.bukkit.block.data.type.WallHangingSign;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -191,6 +195,10 @@ public class RegionSign {
 				((WallSign) blockData).setFacing(getFacing());
 			} else if(blockData instanceof org.bukkit.block.data.type.Sign) {
 				((org.bukkit.block.data.type.Sign) blockData).setRotation(getFacing());
+			} else if (blockData instanceof HangingSign hangingSign) {
+				hangingSign.setRotation(getFacing());
+			} else if (blockData instanceof WallHangingSign wallHangingSign) {
+				wallHangingSign.setFacing(getFacing());
 			} else {
 				errorLogger.submitWarning("Failed to update the facing direction of the sign at" + getStringLocation() + "to " + getFacing() + ", region:" + getRegion().getName());
 				return false;
@@ -216,12 +224,12 @@ public class RegionSign {
 		Sign signState = (Sign) PaperLib.getBlockState(block, false).getState();
 		for(int i = 0; i < signLines.length; i++) {
 			if(signLines[i] == null) {
-				signState.setLine(i, "");
+				signState.getSide(Side.FRONT).line(i, Component.empty());
 				continue;
 			}
 			signLines[i] = Message.fromString(signLines[i]).replacements(getRegion()).getSingle();
 			signLines[i] = Utils.applyColors(signLines[i]);
-			signState.setLine(i, signLines[i]);
+			signState.getSide(Side.FRONT).setLine(i, signLines[i]);
 		}
 		signState.update(false, false);
 		return true;
