@@ -497,21 +497,6 @@ public class Utils {
 		return new ArrayList<>(result);
 	}
 
-
-	/**
-	 * Convert color and formatting codes to bukkit values.
-	 * @param input Start string with color and formatting codes in it
-	 * @return String with the color and formatting codes in the bukkit format
-	 */
-	public static String applyColors(String input) {
-		String result = null;
-		if(input != null) {
-			result = ChatColor.translateAlternateColorCodes('&', input);
-		}
-		return result;
-	}
-
-
 	/**
 	 * Format the currency amount with the characters before and after.
 	 * @param amount Amount of money to format

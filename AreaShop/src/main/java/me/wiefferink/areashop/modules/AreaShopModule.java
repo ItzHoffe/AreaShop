@@ -20,7 +20,6 @@ import me.wiefferink.areashop.regions.ImportJobFactory;
 import me.wiefferink.areashop.regions.RegionModule;
 import me.wiefferink.areashop.services.ServiceManager;
 import me.wiefferink.areashop.tools.Utils;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
@@ -75,9 +74,5 @@ public class AreaShopModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(FeatureFactory.class));
         install(new FactoryModuleBuilder().build(ImportJobFactory.class));
         requestStaticInjection(Utils.class);
-    }
-    @Provides
-    public BukkitAudiences provideBukkitAudiences(@Nonnull Plugin plugin) {
-        return BukkitAudiences.create(plugin);
     }
 }

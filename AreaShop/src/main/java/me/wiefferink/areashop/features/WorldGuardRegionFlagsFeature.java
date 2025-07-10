@@ -93,10 +93,6 @@ public class WorldGuardRegionFlagsFeature extends RegionFeature {
 		// Loop through all flags that are set in the config
 		for(String flagName : flagNames) {
 			String value = Message.fromString(flags.getString(flagName)).replacements(region).getPlain();
-			// In the config normal Bukkit color codes are used, those only need to be translated on 5.X WorldGuard versions
-			if(worldGuard.getDescription().getVersion().startsWith("5.")) {
-				value = translateBukkitToWorldGuardColors(value);
-			}
 			if(flagName.equalsIgnoreCase("members")) {
 				worldGuardInterface.setMembers(worldguardRegion, parseAccessSet(value));
 				//AreaShop.debug("  Flag " + flagName + " set: " + members.toUserFriendlyString());
@@ -193,9 +189,6 @@ public class WorldGuardRegionFlagsFeature extends RegionFeature {
 			}
 		}
 		// Indicate that the regions needs to be saved
-		if(worldGuard.getDescription().getVersion().startsWith("5.")) {
-			plugin.getFileManager().saveIsRequiredForRegionWorld(region.getWorldName());
-		}
 		return result;
 	}
 

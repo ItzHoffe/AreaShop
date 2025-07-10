@@ -13,6 +13,7 @@ import me.wiefferink.areashop.tools.SignUtils;
 import me.wiefferink.areashop.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -228,8 +229,7 @@ public class RegionSign {
 				continue;
 			}
 			signLines[i] = Message.fromString(signLines[i]).replacements(getRegion()).getSingle();
-			signLines[i] = Utils.applyColors(signLines[i]);
-			signState.getSide(Side.FRONT).setLine(i, signLines[i]);
+			signState.getSide(Side.FRONT).line(i, LegacyComponentSerializer.legacyAmpersand().deserialize(signLines[i]));
 		}
 		signState.update(false, false);
 		return true;

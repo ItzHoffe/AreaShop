@@ -39,8 +39,7 @@ dependencies {
     implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.3") {
         exclude("com.google.guava")
     }
-    implementation("net.kyori:adventure-text-minimessage:4.21.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.21.0")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
 
     // Project submodules
@@ -122,7 +121,6 @@ tasks {
         relocate("jakarta.inject", "${base}.jakarta.inject")
         relocate("org.jetbrains.annotations", "${base}.jetbrains.annotations")
         relocate("io.leangen.geantyref", "${base}.geantyref")
-        relocate("net.kyori", "${base}.kyori")
         relocate("org.checkerframework", "${base}.checkerframework")
         relocate("org.intellij", "${base}.intellij")
         relocate("org.spongepowered", "${base}.spongepowered")

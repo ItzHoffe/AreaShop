@@ -18,6 +18,9 @@ import me.wiefferink.areashop.tools.Materials;
 import me.wiefferink.areashop.tools.SignUtils;
 import me.wiefferink.areashop.tools.Utils;
 import me.wiefferink.bukkitdo.Do;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -198,21 +201,25 @@ public class SignListener implements Listener {
             return;
         }
         // Check if the sign is meant for this plugin
-        if(event.getLine(0).contains(plugin.getConfig().getString("signTags.rent"))) {
+        TextComponent firstLine = (TextComponent) event.line(0);
+        String rentTag = plugin.getConfig().getString("signTags.rent");
+        String buyTag = plugin.getConfig().getString("signTags.buy");
+        String addTag = plugin.getConfig().getString("signTags.add");
+        if(firstLine != null && rentTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(rentTag))) {
             if(!player.hasPermission("areashop.createrent") && !player.hasPermission("areashop.createrent.member") && !player.hasPermission("areashop.createrent.owner")) {
                 messageBridge.message(player, "setup-noPermissionRent");
                 return;
             }
             // Get the other lines
-            String secondLine = event.getLine(1);
-            String thirdLine = event.getLine(2);
-            String fourthLine = event.getLine(3);
+            TextComponent secondLine = (TextComponent) event.line(1);
+            TextComponent thirdLine = (TextComponent) event.line(2);
+            TextComponent fourthLine = (TextComponent) event.line(3);
 
             // Get the regionManager for accessing regions
             RegionManager regionManager = plugin.getRegionManager(event.getPlayer().getWorld());
 
             // If the secondLine does not contain a name try to find the region by location
-            if(secondLine == null || secondLine.isEmpty()) {
+            if(secondLine == null || secondLine.equals(Component.empty())) {
                 Set<ProtectedRegion> regions = worldGuardInterface.getApplicableRegionsSet(event.getBlock().getLocation());
                 if(regions != null) {
                     boolean first = true;
@@ -233,25 +240,25 @@ public class SignListener implements Listener {
                         }
                     }
                     if(candidate != null) {
-                        secondLine = candidate.getId();
+                        secondLine = LegacyComponentSerializer.legacyAmpersand().deserialize(candidate.getId());
                     }
                 }
             }
 
-            boolean priceSet = fourthLine != null && !fourthLine.isEmpty();
-            boolean durationSet = thirdLine != null && !thirdLine.isEmpty();
+            boolean priceSet = fourthLine != null && !fourthLine.equals(Component.empty());
+            boolean durationSet = thirdLine != null && !thirdLine.equals(Component.empty());
             // check if all the lines are correct
-            if(secondLine == null || secondLine.isEmpty()) {
+            if(secondLine == null || secondLine.equals(Component.empty())) {
                 messageBridge.message(player, "setup-noRegion");
                 return;
             }
-            ProtectedRegion region = regionManager.getRegion(secondLine);
+            ProtectedRegion region = regionManager.getRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine));
             if(region == null) {
                 messageBridge.message(player, "cmd-noRegion", secondLine);
                 return;
             }
 
-            IFileManager.AddResult addResult = fileManager.checkRegionAdd(player, regionManager.getRegion(secondLine), event.getPlayer().getWorld(), GeneralRegion.RegionType.RENT);
+            IFileManager.AddResult addResult = fileManager.checkRegionAdd(player, regionManager.getRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine)), event.getPlayer().getWorld(), GeneralRegion.RegionType.RENT);
             if(addResult == IFileManager.AddResult.BLACKLISTED) {
                 messageBridge.message(player, "setup-blacklisted", secondLine);
             } else if(addResult == IFileManager.AddResult.ALREADYADDED) {
@@ -260,14 +267,14 @@ public class SignListener implements Listener {
                 messageBridge.message(player, "setup-alreadyOtherWorld");
             } else if(addResult == IFileManager.AddResult.NOPERMISSION) {
                 messageBridge.message(player, "setup-noPermission", secondLine);
-            } else if(thirdLine != null && !thirdLine.isEmpty() && !Utils.checkTimeFormat(thirdLine)) {
+            } else if(thirdLine != null && !thirdLine.equals(Component.empty()) && !Utils.checkTimeFormat(LegacyComponentSerializer.legacyAmpersand().serialize(thirdLine))) {
                 messageBridge.message(player, "setup-wrongDuration");
             } else {
                 double price = 0.0;
                 if(priceSet) {
                     // Check the fourth line
                     try {
-                        price = Double.parseDouble(fourthLine);
+                        price = Double.parseDouble(LegacyComponentSerializer.legacyAmpersand().serialize(fourthLine));
                     } catch(NumberFormatException e) {
                         messageBridge.message(player, "setup-wrongPrice");
                         return;
@@ -275,7 +282,7 @@ public class SignListener implements Listener {
                 }
 
                 // Add rent to the FileManager
-                final RentRegion rent = regionFactory.createRentRegion(secondLine, event.getPlayer().getWorld());
+                final RentRegion rent = regionFactory.createRentRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine), event.getPlayer().getWorld());
                 boolean isMember = worldGuardInterface.containsMember(rent.getRegion(), player.getUniqueId());
                 boolean isOwner = worldGuardInterface.containsOwner(rent.getRegion(), player.getUniqueId());
                 boolean landlord = (!player.hasPermission("areashop.createrent")
@@ -289,7 +296,7 @@ public class SignListener implements Listener {
                     rent.setPrice(price);
                 }
                 if(durationSet) {
-                    rent.setDuration(thirdLine);
+                    rent.setDuration(LegacyComponentSerializer.legacyAmpersand().serialize(thirdLine));
                 }
                 rent.getSignsFeature().addSign(event.getBlock().getLocation(), event.getBlock().getType(), SignUtils.getSignFacing(event.getBlock()), null);
 
@@ -304,7 +311,7 @@ public class SignListener implements Listener {
                 // Update the region after the event has written its lines
                 Do.sync(rent::update);
             }
-        } else if(event.getLine(0).contains(plugin.getConfig().getString("signTags.buy"))) {
+        } else if(firstLine != null && buyTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(buyTag))) {
             // Check for permission
             if(!player.hasPermission("areashop.createbuy") && !player.hasPermission("areashop.createbuy.member") && !player.hasPermission("areashop.createbuy.owner")) {
                 messageBridge.message(player, "setup-noPermissionBuy");
@@ -312,14 +319,14 @@ public class SignListener implements Listener {
             }
 
             // Get the other lines
-            String secondLine = event.getLine(1);
-            String thirdLine = event.getLine(2);
+            TextComponent secondLine = (TextComponent) event.line(1);
+            TextComponent thirdLine = (TextComponent) event.line(2);
 
             // Get the regionManager for accessing regions
             RegionManager regionManager = plugin.getRegionManager(event.getPlayer().getWorld());
 
             // If the secondLine does not contain a name try to find the region by location
-            if(secondLine == null || secondLine.isEmpty()) {
+            if(secondLine == null || secondLine.equals(Component.empty())) {
                 Set<ProtectedRegion> regions = worldGuardInterface.getApplicableRegionsSet(event.getBlock().getLocation());
                 if(regions != null) {
                     boolean first = true;
@@ -340,18 +347,18 @@ public class SignListener implements Listener {
                         }
                     }
                     if(candidate != null) {
-                        secondLine = candidate.getId();
+                        secondLine = LegacyComponentSerializer.legacyAmpersand().deserialize(candidate.getId());
                     }
                 }
             }
 
-            boolean priceSet = thirdLine != null && !thirdLine.isEmpty();
+            boolean priceSet = thirdLine != null && !thirdLine.equals(Component.empty());
             // Check if all the lines are correct
-            if(secondLine == null || secondLine.isEmpty()) {
+            if(secondLine == null || secondLine.equals(Component.empty())) {
                 messageBridge.message(player, "setup-noRegion");
                 return;
             }
-            ProtectedRegion region = regionManager.getRegion(secondLine);
+            ProtectedRegion region = regionManager.getRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine));
             if(region == null) {
                 messageBridge.message(player, "cmd-noRegion", secondLine);
                 return;
@@ -370,7 +377,7 @@ public class SignListener implements Listener {
                 if(priceSet) {
                     // Check the fourth line
                     try {
-                        price = Double.parseDouble(thirdLine);
+                        price = Double.parseDouble(LegacyComponentSerializer.legacyAmpersand().serialize(thirdLine));
                     } catch(NumberFormatException e) {
                         messageBridge.message(player, "setup-wrongPrice");
                         return;
@@ -378,7 +385,7 @@ public class SignListener implements Listener {
                 }
 
                 // Add buy to the FileManager
-                final BuyRegion buy = regionFactory.createBuyRegion(secondLine, event.getPlayer().getWorld());
+                final BuyRegion buy = regionFactory.createBuyRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine), event.getPlayer().getWorld());
                 boolean isMember = worldGuardInterface.containsMember(buy.getRegion(), player.getUniqueId());
                 boolean isOwner = worldGuardInterface.containsOwner(buy.getRegion(), player.getUniqueId());
                 boolean landlord = (!player.hasPermission("areashop.createbuy")
@@ -404,7 +411,7 @@ public class SignListener implements Listener {
                 // Update the region after the event has written its lines
                 Do.sync(buy::update);
             }
-        } else if(event.getLine(0).contains(plugin.getConfig().getString("signTags.add"))) {
+        } else if(firstLine != null && addTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(addTag))) {
             // Check for permission
             if(!player.hasPermission("areashop.addsign")) {
                 messageBridge.message(player, "addsign-noPermission");
@@ -412,13 +419,13 @@ public class SignListener implements Listener {
             }
 
             // Get the other lines
-            String secondLine = event.getLine(1);
-            String thirdLine = event.getLine(2);
+            TextComponent secondLine = (TextComponent) event.line(1);
+            TextComponent thirdLine = (TextComponent) event.line(2);
 
             GeneralRegion region;
-            if(secondLine != null && !secondLine.isEmpty()) {
+            if(secondLine != null && !secondLine.equals(Component.empty())) {
                 // Get region by secondLine of the sign
-                region = fileManager.getRegion(secondLine);
+                region = fileManager.getRegion(LegacyComponentSerializer.legacyAmpersand().serialize(secondLine));
                 if(region == null) {
                     messageBridge.message(player, "addSign-notRegistered", secondLine);
                     return;
@@ -436,11 +443,11 @@ public class SignListener implements Listener {
                 region = regions.get(0);
             }
 
-            if(thirdLine == null || thirdLine.isEmpty()) {
+            if(thirdLine == null || thirdLine.equals(Component.empty())) {
                 region.getSignsFeature().addSign(event.getBlock().getLocation(), event.getBlock().getType(), SignUtils.getSignFacing(event.getBlock()), null);
                 messageBridge.message(player, "addsign-success", region);
             } else {
-                region.getSignsFeature().addSign(event.getBlock().getLocation(), event.getBlock().getType(), SignUtils.getSignFacing(event.getBlock()), thirdLine);
+                region.getSignsFeature().addSign(event.getBlock().getLocation(), event.getBlock().getType(), SignUtils.getSignFacing(event.getBlock()), LegacyComponentSerializer.legacyAmpersand().serialize(thirdLine));
                 messageBridge.message(player, "addsign-successProfile", thirdLine, region);
             }
 
