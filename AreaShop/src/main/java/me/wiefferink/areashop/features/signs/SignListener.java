@@ -205,7 +205,7 @@ public class SignListener implements Listener {
         String rentTag = plugin.getConfig().getString("signTags.rent");
         String buyTag = plugin.getConfig().getString("signTags.buy");
         String addTag = plugin.getConfig().getString("signTags.add");
-        if(firstLine != null && rentTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(rentTag))) {
+        if(firstLine != null && rentTag != null && LegacyComponentSerializer.legacyAmpersand().serialize(firstLine).equalsIgnoreCase(rentTag)) {
             if(!player.hasPermission("areashop.createrent") && !player.hasPermission("areashop.createrent.member") && !player.hasPermission("areashop.createrent.owner")) {
                 messageBridge.message(player, "setup-noPermissionRent");
                 return;
@@ -311,7 +311,7 @@ public class SignListener implements Listener {
                 // Update the region after the event has written its lines
                 Do.sync(rent::update);
             }
-        } else if(firstLine != null && buyTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(buyTag))) {
+        } else if(firstLine != null && buyTag != null && LegacyComponentSerializer.legacyAmpersand().serialize(firstLine).equalsIgnoreCase(buyTag)) {
             // Check for permission
             if(!player.hasPermission("areashop.createbuy") && !player.hasPermission("areashop.createbuy.member") && !player.hasPermission("areashop.createbuy.owner")) {
                 messageBridge.message(player, "setup-noPermissionBuy");
@@ -411,7 +411,7 @@ public class SignListener implements Listener {
                 // Update the region after the event has written its lines
                 Do.sync(buy::update);
             }
-        } else if(firstLine != null && addTag != null && firstLine.contains(LegacyComponentSerializer.legacyAmpersand().deserialize(addTag))) {
+        } else if(firstLine != null && addTag != null && LegacyComponentSerializer.legacyAmpersand().serialize(firstLine).equalsIgnoreCase(addTag)) {
             // Check for permission
             if(!player.hasPermission("areashop.addsign")) {
                 messageBridge.message(player, "addsign-noPermission");
