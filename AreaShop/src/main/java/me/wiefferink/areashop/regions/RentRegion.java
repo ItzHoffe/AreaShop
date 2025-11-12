@@ -192,6 +192,9 @@ public class RentRegion extends GeneralRegion {
 		}
 	}
 
+	public void setMaxExtends(int times) {
+		setSetting("rent.maxExtends", times); }
+
 	@Override
 	public Object provideReplacement(String variable) {
 		return switch (variable) {

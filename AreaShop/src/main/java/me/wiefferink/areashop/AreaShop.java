@@ -16,9 +16,10 @@ import me.wiefferink.areashop.interfaces.AreaShopInterface;
 import me.wiefferink.areashop.interfaces.WorldEditInterface;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
 import me.wiefferink.areashop.listeners.PlayerLoginLogoutListener;
+import me.wiefferink.areashop.managers.CacheManager;
 import me.wiefferink.areashop.managers.FeatureManager;
-import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.managers.FileManager;
+import me.wiefferink.areashop.managers.IFileManager;
 import me.wiefferink.areashop.managers.Manager;
 import me.wiefferink.areashop.managers.SignErrorLogger;
 import me.wiefferink.areashop.managers.SignLinkerManager;
@@ -53,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -78,6 +80,7 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 	private MessageBridge messageBridge;
 	private IFileManager fileManager = null;
 	private LanguageManager languageManager = null;
+	private CacheManager cacheManager = null;
 	private SignLinkerManager signLinkerManager = null;
 	private FeatureManager featureManager = null;
 	private SignManager signManager;
@@ -280,11 +283,17 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 		managers.add(featureManager);
 		signManager = injector.getInstance(SignManager.class);
 		managers.add(signManager);
+		cacheManager = injector.getInstance(CacheManager.class);
+		String rawExpiryDuration = fileManager.getConfig().getString("cacheExpiryDuration", "7d");
+		long millis = Utils.durationStringToLong(rawExpiryDuration);
+		cacheManager.initialize(new File(getDataFolder(), "uuid-cache.bin"), Duration.ofMillis(millis));
+		cacheManager.loadCache();
+		managers.add(cacheManager);
 
 		loadExtensions();
 
 		// Register the event listeners
-		getServer().getPluginManager().registerEvents(new PlayerLoginLogoutListener(this, messageBridge), this);
+		getServer().getPluginManager().registerEvents(new PlayerLoginLogoutListener(this, messageBridge, this.cacheManager), this);
 
 		setupTasks();
 
@@ -352,6 +361,10 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 		}
 
 		return version;
+	}
+
+	public CacheManager getCacheManager() {
+		return cacheManager;
 	}
 
 	/**

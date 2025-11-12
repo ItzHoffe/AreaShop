@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.interfaces.WorldEditSelection;
 import me.wiefferink.areashop.interfaces.WorldGuardInterface;
+import me.wiefferink.areashop.managers.CacheManager;
 import me.wiefferink.areashop.regions.BuyRegion;
 import me.wiefferink.areashop.regions.GeneralRegion;
 import me.wiefferink.areashop.regions.RentRegion;
@@ -37,8 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Utils {
 
@@ -792,10 +791,20 @@ public class Utils {
         if (uuid == null) {
             return "";
         }
-        String name = Bukkit.getOfflinePlayer(uuid).getName();
+
+        final CacheManager cacheManager = plugin.getCacheManager();
+
+        if (cacheManager.contains(uuid))
+            return cacheManager.get(uuid).getName();
+
+
+        final String name = Bukkit.getOfflinePlayer(uuid).getName();
+
         if (name != null) {
+            cacheManager.put(uuid, new CacheWrapper(uuid, name, System.currentTimeMillis()));
             return name;
         }
+
         return "";
     }
 
