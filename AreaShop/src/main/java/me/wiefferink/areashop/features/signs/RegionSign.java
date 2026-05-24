@@ -4,7 +4,6 @@ import com.google.common.base.Objects;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import io.github.bakedlibs.dough.blocks.BlockPosition;
-import io.papermc.lib.PaperLib;
 import me.wiefferink.areashop.AreaShop;
 import me.wiefferink.areashop.managers.SignErrorLogger;
 import me.wiefferink.areashop.regions.GeneralRegion;
@@ -189,20 +188,18 @@ public class RegionSign {
 			// Don't do physics here, we first need to update the direction
 			block.setType(signType, false);
 
-			BlockState blockState = PaperLib.getBlockState(block, false).getState();
+			BlockState blockState = block.getState();
 			BlockData blockData = blockState.getBlockData();
 
-			if(blockData instanceof WallSign) {
-				((WallSign) blockData).setFacing(getFacing());
-			} else if(blockData instanceof org.bukkit.block.data.type.Sign) {
-				((org.bukkit.block.data.type.Sign) blockData).setRotation(getFacing());
-			} else if (blockData instanceof HangingSign hangingSign) {
-				hangingSign.setRotation(getFacing());
-			} else if (blockData instanceof WallHangingSign wallHangingSign) {
-				wallHangingSign.setFacing(getFacing());
-			} else {
-				errorLogger.submitWarning("Failed to update the facing direction of the sign at" + getStringLocation() + "to " + getFacing() + ", region:" + getRegion().getName());
-				return false;
+			switch (blockData) {
+				case WallSign wallSign -> wallSign.setFacing(getFacing());
+				case org.bukkit.block.data.type.Sign sign -> sign.setRotation(getFacing());
+				case HangingSign hangingSign -> hangingSign.setRotation(getFacing());
+				case WallHangingSign wallHangingSign -> wallHangingSign.setFacing(getFacing());
+				default -> {
+					errorLogger.submitWarning("Failed to update the facing direction of the sign at" + getStringLocation() + "to " + getFacing() + ", region:" + getRegion().getName());
+					return false;
+				}
 			}
 			block.setBlockData(blockData);
 
@@ -222,7 +219,7 @@ public class RegionSign {
 		}
 
 		// Apply replacements and color and then set it on the sign
-		Sign signState = (Sign) PaperLib.getBlockState(block, false).getState();
+		Sign signState = (Sign) block.getState();
 		for(int i = 0; i < signLines.length; i++) {
 			if(signLines[i] == null) {
 				signState.getSide(Side.FRONT).line(i, Component.empty());

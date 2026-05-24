@@ -1,6 +1,6 @@
 plugins {
-    id("io.github.goooler.shadow") version "8.1.7"
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 idea {
@@ -22,8 +22,6 @@ dependencies {
         exclude("org.bukkit", "bukkit")
     }
 
-    // 3rd party libraries
-    api("io.papermc:paperlib:1.0.8")
     api("com.github.NLthijs48:InteractiveMessenger:e7749258ca")
     api("com.github.NLthijs48:BukkitDo:819d51ec2b")
     api("io.github.baked-libs:dough-data:1.2.0")
@@ -33,13 +31,13 @@ dependencies {
     api("com.google.inject.extensions:guice-assistedinject:7.0.0") {
         exclude("com.google.guava")
     }
-    implementation("org.incendo:cloud-paper:2.0.0-beta.10") {
+    implementation("org.incendo:cloud-paper:2.0.0-beta.15") {
         exclude("com.google.guava")
     }
     implementation("org.incendo:cloud-processors-confirmation:1.0.0-beta.3") {
         exclude("com.google.guava")
     }
-    compileOnly("net.kyori:adventure-text-minimessage:4.21.0")
+    compileOnly("net.kyori:adventure-text-minimessage:5.1.1")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
 
     // Project submodules
@@ -54,8 +52,7 @@ dependencies {
         runtimeOnly(projects.adapters.plugins.fastasyncworldedit)
         runtimeOnly(projects.adapters.plugins.essentials)
     }
-    testImplementation("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
-    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.50.0")
+    testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.1.2:4.113.1")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 }
@@ -130,15 +127,15 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21.7")
+        minecraftVersion("26.1.2")
 
         downloadPlugins {
-            github("EssentialsX", "essentials", "2.21.1", "EssentialsX-2.21.1.jar")
+            url("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.22.0-dev+112-5baf239.jar")
             github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
             // WorldEdit 7.3.9
-            url("https://mediafilez.forgecdn.net/files/5935/693/worldedit-bukkit-7.3.9.jar")
+            url("https://mediafilez.forgecdn.net/files/8037/361/worldedit-bukkit-7.4.3.jar")
             // WorldGuard 7.0.12
-            url("https://mediafilez.forgecdn.net/files/5719/698/worldguard-bukkit-7.0.12-dist.jar")
+            url("https://mediafilez.forgecdn.net/files/7803/732/worldguard-bukkit-7.0.16.jar")
         }
     }
 }

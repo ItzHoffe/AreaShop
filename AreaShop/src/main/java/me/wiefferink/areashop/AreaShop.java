@@ -6,7 +6,7 @@ import com.google.inject.Stage;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import io.papermc.lib.PaperLib;
+import io.papermc.paper.ServerBuildInfo;
 import me.wiefferink.areashop.adapters.platform.MinecraftPlatform;
 import me.wiefferink.areashop.adapters.platform.paper.PaperPlatform;
 import me.wiefferink.areashop.commands.util.AreashopCommands;
@@ -29,7 +29,6 @@ import me.wiefferink.areashop.modules.DependencyModule;
 import me.wiefferink.areashop.modules.PlatformModule;
 import me.wiefferink.areashop.services.ServiceManager;
 import me.wiefferink.areashop.tools.SimpleMessageBridge;
-import me.wiefferink.areashop.tools.SpigotPlatform;
 import me.wiefferink.areashop.tools.Utils;
 import me.wiefferink.areashop.tools.version.Version;
 import me.wiefferink.areashop.tools.version.VersionUtil;
@@ -178,22 +177,15 @@ public final class AreaShop extends JavaPlugin implements AreaShopApi {
 		messageBridge = new SimpleMessageBridge(this.serviceManager);
 		signErrorLogger = new SignErrorLogger(new File(getDataFolder(), signLogFile));
 
+		ServerBuildInfo serverBuildInfo = ServerBuildInfo.buildInfo();
 		// Setup NMS Impl
-		Version currentServerVersion = VersionUtil.parseMinecraftVersion(Bukkit.getBukkitVersion());
-		if (currentServerVersion.versionData().isOlderThan(VersionUtil.MC_1_21)) {
-			error("Unsupported minecraft version: " + currentServerVersion + "! Minimum is 1.21");
+		if (serverBuildInfo.brandName().equalsIgnoreCase("Paper") && !serverBuildInfo.minecraftVersionName().equalsIgnoreCase("26.1.2")) {
+			error("Unsupported version");
 			shutdownOnError();
 			return;
 		}
 
-		final MinecraftPlatform platform;
-		if (PaperLib.isPaper()) {
-			platform = new PaperPlatform(this);
-			info("Detected Paper; using the PaperPlatform impl");
-		} else {
-			platform = new SpigotPlatform(this);
-			info("Detected Spigot; using the SpigotPlatform impl");
-		}
+		final MinecraftPlatform platform = new PaperPlatform(this);
 		final PlatformModule platformModule = new PlatformModule(platform);
 
 		// Check if Vault is present

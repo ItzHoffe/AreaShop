@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -974,7 +975,7 @@ public abstract class GeneralRegion implements GeneralRegionInterface, Comparabl
 		BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		scheduler.runTaskAsynchronously(this.plugin, () -> {
-			try(Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);){
+			try(Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);){
 				writer.write(data);
 				future.complete(true);
 			} catch (IOException ex) {

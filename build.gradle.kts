@@ -55,6 +55,12 @@ subprojects {
         maven("https://maven.enginehub.org/repo/")
     }
 
+    configurations.configureEach {
+        // EngineHub modules can publish different strict log4j-bom constraints across artifacts.
+        // The Minecraft server provides Log4j at runtime, so this BOM is safe to omit here.
+        exclude(group = "org.apache.logging.log4j", module = "log4j-bom")
+    }
+
     dependencies {
         implementation("org.jetbrains:annotations:24.0.1")
     }

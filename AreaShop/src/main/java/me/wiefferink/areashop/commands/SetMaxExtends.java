@@ -79,7 +79,6 @@ public class SetMaxExtends extends AreashopCommandBean {
         }
         int extend = context.get(KEY_EXTENDS);
 
-        sender.sendMessage();
         rent.setMaxExtends(extend);
         rent.update();
         this.messageBridge.message(sender, "setmaxextends-success", rent);
